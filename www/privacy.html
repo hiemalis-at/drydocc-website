@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth
+  [--c-paper:233_236_241] [--c-panel:247_249_251] [--c-teal:37_152_154] [--c-dockblue:68_172_199]
+  [--c-hardhat:222_172_56] [--c-ink:25_28_32] [--c-ink-soft:84_94_104]
+  [--c-line:205_212_220] [--c-term:221_227_234] [--c-term-ink:25_28_32] [--c-navy:204_232_242] [--c-wash:243_245_248]
+  dark:[--c-paper:23_26_30] dark:[--c-panel:33_40_48] dark:[--c-teal:38_166_166]
+  dark:[--c-dockblue:39_164_179] dark:[--c-hardhat:225_169_56] dark:[--c-ink:233_236_241] dark:[--c-ink-soft:160_171_181]
+  dark:[--c-line:52_62_72] dark:[--c-term:13_16_20] dark:[--c-term-ink:221_244_246] dark:[--c-navy:11_23_52] dark:[--c-wash:34_42_52]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy statement - drydocc</title>
+  <meta name="description" content="Privacy statement (Datenschutzerklärung) of the drydocc website: no cookies, no tracking, and who receives what when you visit.">
+  <link rel="icon" type="image/svg+xml" href="img/drydocc-fac.svg">
+
+  <!-- Pre-paint theme resolution (blocking, before any stylesheet) -->
+  <script src="js/theme-prepaint.js"></script>
+
+  <!-- Self-hosted fonts - no request to Google. -->
+  <link rel="stylesheet" href="fonts/fonts.css">
+
+  <!-- Tailwind CSS via CDN, themed by the shared config. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind.config.js"></script>
+
+  <!-- GSAP + ScrollTrigger (Doccap's scrubbed strips, the spinning pixels) -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <!-- IoC Container (ES Module): <body data-page> picks the legal container -->
+  <script type="module" src="js/main.js"></script>
+
+  <!-- Alpine.js via CDN (pinned, as on the main page) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.11/dist/cdn.min.js"></script>
+</head>
+
+<body id="top" data-page="privacy" x-data="legalPage" class="bg-paper text-ink font-sans antialiased selection:bg-teal selection:text-paper">
+
+  <!-- SLIM NAV - home, the language switch and the theme switch -->
+  <nav class="fixed inset-x-0 top-0 z-50 h-11 bg-panel/75 backdrop-blur-md border-b border-line">
+    <div class="max-w-6xl mx-auto h-full px-4 flex items-center justify-between gap-4">
+      <a href="index.html" class="flex items-center gap-2">
+        <img src="img/logo-sqaured-light.jpg" alt="drydocc" class="h-6 w-6 [image-rendering:pixelated] dark:hidden">
+        <img src="img/logo-sqaured-dark.jpg" alt="drydocc" class="h-6 w-6 [image-rendering:pixelated] hidden dark:block">
+        <span class="font-display font-bold text-sm tracking-tight">drydocc</span>
+      </a>
+
+      <div class="flex items-center gap-1 sm:gap-2">
+        <a href="index.html#dock" class="hidden sm:inline-block px-2 py-1 text-xs font-medium text-ink-soft hover:text-ink transition-colors">Dock</a>
+        <a href="https://github.com/hiemalis-at/drydocc" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-ink-soft hover:text-ink transition-colors">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span class="hidden sm:inline">GitHub</span>
+        </a>
+
+        <!-- Language switch: English / Deutsch -->
+        <div role="group" aria-label="Language / Sprache" class="ml-1 flex items-center border border-line bg-panel/70">
+          <template x-for="lang in languages" :key="lang">
+            <button type="button" @click="selectLanguage(lang)" :aria-pressed="isLanguage(lang)"
+                    class="px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider transition-colors"
+                    :class="isLanguage(lang) ? 'bg-teal text-paper' : 'text-ink-soft hover:text-ink'"
+                    x-text="lang"></button>
+          </template>
+        </div>
+
+        <!-- Theme switch: a pixel track with a square knob that steps
+             across. Sun on the light side, moon (and stars) on the dark. -->
+        <button type="button" role="switch" :aria-checked="theme === 'dark'" aria-label="Dark mode"
+                @click="toggleTheme()" title="Toggle light/dark theme"
+                class="relative ml-1 h-6 w-12 shrink-0 bg-navy border border-line hover:border-teal transition-colors">
+          <span aria-hidden="true" class="absolute left-2 top-1 h-0.5 w-0.5 bg-ink hidden dark:block"></span>
+          <span aria-hidden="true" class="absolute left-4 top-3 h-0.5 w-0.5 bg-ink hidden dark:block"></span>
+          <span aria-hidden="true" class="absolute right-2 top-2 h-1 w-2 bg-panel dark:hidden"></span>
+          <span aria-hidden="true" class="absolute right-3 top-1.5 h-0.5 w-1 bg-panel dark:hidden"></span>
+          <span aria-hidden="true"
+                class="absolute left-0.5 top-0.5 grid h-[18px] w-[18px] place-items-center bg-panel border border-line shadow-[0_1px_0_0_rgb(var(--c-ink)/0.25)] translate-x-0 dark:translate-x-6 transition-transform duration-200 ease-[steps(3)]">
+            <svg class="h-3 w-3 fill-hardhat dark:hidden" viewBox="0 0 8 8" shape-rendering="crispEdges">
+              <rect x="2" y="2" width="4" height="4"/><rect x="3" y="0" width="2" height="1"/><rect x="3" y="7" width="2" height="1"/>
+              <rect x="0" y="3" width="1" height="2"/><rect x="7" y="3" width="1" height="2"/>
+              <rect x="1" y="1" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/>
+            </svg>
+            <svg class="h-3 w-3 fill-ink hidden dark:block" viewBox="0 0 8 8" shape-rendering="crispEdges">
+              <rect x="2" y="0" width="3" height="1"/><rect x="1" y="1" width="2" height="1"/><rect x="0" y="2" width="2" height="4"/>
+              <rect x="1" y="6" width="2" height="1"/><rect x="2" y="7" width="4" height="1"/><rect x="5" y="6" width="2" height="1"/>
+              <rect x="6" y="1" width="1" height="1"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- THE DOCK BACKGROUND - the main page's first tile, held still. -->
+  <div class="fixed inset-x-0 top-0 -z-10 pointer-events-none dark:hidden" aria-hidden="true">
+    <div class="relative">
+      <img src="img/drydocc-bg-light.jpg" alt="" class="w-full h-auto [image-rendering:pixelated] opacity-80">
+      <div class="absolute bottom-0 inset-x-0 h-[70vh] bg-gradient-to-b from-transparent via-paper/30 to-paper"></div>
+    </div>
+  </div>
+  <div class="fixed inset-x-0 top-0 -z-10 pointer-events-none hidden dark:block" aria-hidden="true">
+    <div class="relative">
+      <img src="img/drydocc-bg-dark.jpg" alt="" class="w-full h-auto [image-rendering:pixelated] opacity-80">
+      <div class="absolute bottom-0 inset-x-0 h-[70vh] bg-gradient-to-b from-transparent via-paper/30 to-paper"></div>
+    </div>
+  </div>
+
+  <main class="relative max-w-4xl mx-auto px-4 pt-24 pb-20 md:pt-28 md:pb-28 flex flex-col gap-12 md:gap-16">
+      <header class="bg-paper/80 backdrop-blur-sm border border-line p-6 md:p-10">
+        <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Privacy</p>
+            <h1 class="mt-3 font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.1]">Privacy statement</h1>
+            <p class="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">As of 14 October 2026</p>
+        </div>
+        <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Datenschutz</p>
+            <h1 class="mt-3 font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.1]">Datenschutzerklärung</h1>
+            <p class="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">Stand: 14. Oktober 2026</p>
+        </div>
+      </header>
+
+      <section id="summary" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:summary') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-teal' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">In short</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">The short version</h2>
+            <ul class="mt-4 list-none m-0 p-0 flex flex-col gap-2">
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span>No cookies. No analytics, no tracking, no advertising.</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span>Your browser fetches this site from GitHub Pages, plus a few scripts and images from content delivery networks. They see your IP address, as every server you connect to does.</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span>The fonts come from this site itself - nothing goes to Google.</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span>If you pick light or dark mode, your browser remembers it - on your device only.</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span>If you write through the contact form, Formspree delivers your message.</span></li>
+            </ul>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Kurz gesagt</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Das Wichtigste in Kürze</h2>
+            <ul class="mt-4 list-none m-0 p-0 flex flex-col gap-2">
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span>Keine Cookies. Keine Analyse, kein Tracking, keine Werbung.</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span>Ihr Browser lädt diese Website von GitHub Pages, dazu einige Skripte und Bilder von Content-Delivery-Netzwerken. Diese sehen Ihre IP-Adresse - wie jeder Server, mit dem Sie sich verbinden.</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span>Die Schriften kommen von dieser Website selbst - an Google geht nichts.</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span>Wenn Sie den hellen oder dunklen Modus wählen, merkt sich Ihr Browser das - nur auf Ihrem Gerät.</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span>Wenn Sie über das Kontaktformular schreiben, stellt Formspree Ihre Nachricht zu.</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCCAP between the crates; scroll scrubs his frames. -->
+      <div id="tux-privacy-summary-tux" class="mx-auto w-fit flex items-end gap-4" :class="tuxPoses[0].layoutClass">
+        <div class="relative w-24 h-24 md:w-28 md:h-28 shrink-0">
+          <template x-for="(frame, f) in tuxPoses[0].frames" :key="frame">
+            <img :src="frame" alt="Doccap, the drydocc captain"
+                 class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                 :class="[f === getTuxFrame(tuxPoses[0].id) ? '' : 'hidden', tuxPoses[0].flipClass]">
+          </template>
+        </div>
+        <p class="max-w-sm bg-panel/90 border border-line px-4 py-3 text-sm leading-relaxed text-ink" x-text="tuxPoses[0].line"></p>
+      </div>
+
+      <section id="controller" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:controller') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-dockblue' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Art. 4(7) GDPR</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Who is responsible</h2>
+            <p class="mt-4">The controller is the media owner named in the <a href="impressum.html" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Impressum</a>, where you also find the contact details.</p>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Art. 4 Z 7 DSGVO</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Verantwortlicher</h2>
+            <p class="mt-4">Verantwortlich ist der im <a href="impressum.html" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Impressum</a> genannte Medieninhaber; dort finden Sie auch die Kontaktdaten.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="hosting" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:hosting') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-hardhat' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Hosting</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">GitHub Pages</h2>
+            <p class="mt-4">This site is hosted on GitHub Pages, a service of GitHub (GitHub, Inc., USA, and GitHub B.V., the Netherlands). When you open a page, your browser sends GitHub your IP address and the usual request data: the page requested, the time, and your browser. According to GitHub, the IP address of every visitor is logged and stored for security purposes.</p>
+            <p class="mt-4">This is necessary to deliver the site and keep it secure. Legal basis: Art. 6(1)(f) GDPR - the legitimate interest in a secure, reliable website. GitHub takes part in the EU-U.S. Data Privacy Framework.</p>
+            <p class="mt-4">More: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">GitHub General Privacy Statement</a> · <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages#data-collection" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">GitHub Pages: data collection</a></p>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Hosting</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">GitHub Pages</h2>
+            <p class="mt-4">Diese Website wird auf GitHub Pages gehostet, einem Dienst von GitHub (GitHub, Inc., USA, und GitHub B.V., Niederlande). Wenn Sie eine Seite aufrufen, sendet Ihr Browser GitHub Ihre IP-Adresse und die üblichen Anfragedaten: die angefragte Seite, den Zeitpunkt und Ihren Browser. Laut GitHub wird die IP-Adresse jeder Besucherin und jedes Besuchers zu Sicherheitszwecken protokolliert und gespeichert.</p>
+            <p class="mt-4">Das ist nötig, um die Website auszuliefern und sicher zu betreiben. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO - das berechtigte Interesse an einer sicheren, zuverlässigen Website. GitHub nimmt am EU-U.S. Data Privacy Framework teil.</p>
+            <p class="mt-4">Mehr: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">GitHub General Privacy Statement</a> · <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages#data-collection" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">GitHub Pages: Datenerhebung</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="delivery" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:delivery') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-teal' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Content delivery</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Scripts and images from CDNs</h2>
+            <p class="mt-4">To display the page, your browser loads files from these content delivery networks. Each of them receives your IP address and browser data:</p>
+            <ul class="mt-4 list-none m-0 p-0 flex flex-col gap-2">
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span><code class="font-mono text-[13px] text-ink">cdn.tailwindcss.com</code> - the Tailwind CSS styling engine (<a href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Tailwind Labs Inc.</a>, USA)</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span><code class="font-mono text-[13px] text-ink">cdn.jsdelivr.net</code> - the GSAP animation library and Alpine.js (<a href="https://www.jsdelivr.com/terms/privacy-policy" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">jsDelivr privacy policy</a>)</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span><code class="font-mono text-[13px] text-ink">img.shields.io</code> - the status badges on the main page (<a href="https://shields.io" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Shields.io</a>, an open-source service)</span></li>
+            </ul>
+            <p class="mt-4">Legal basis: Art. 6(1)(f) GDPR - a fast, reliable page that a small private project can sustain. The fonts are not among them: this site serves them itself.</p>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Auslieferung</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Skripte und Bilder von CDNs</h2>
+            <p class="mt-4">Um die Seite anzuzeigen, lädt Ihr Browser Dateien von diesen Content-Delivery-Netzwerken. Jedes davon erhält Ihre IP-Adresse und Browserdaten:</p>
+            <ul class="mt-4 list-none m-0 p-0 flex flex-col gap-2">
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span><code class="font-mono text-[13px] text-ink">cdn.tailwindcss.com</code> - die Styling-Engine Tailwind CSS (<a href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Tailwind Labs Inc.</a>, USA)</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span><code class="font-mono text-[13px] text-ink">cdn.jsdelivr.net</code> - die Animationsbibliothek GSAP und Alpine.js (<a href="https://www.jsdelivr.com/terms/privacy-policy" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Datenschutzerklärung von jsDelivr</a>)</span></li>
+              <li class="flex items-start gap-2"><span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span><span><code class="font-mono text-[13px] text-ink">img.shields.io</code> - die Status-Badges auf der Startseite (<a href="https://shields.io" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Shields.io</a>, ein Open-Source-Dienst)</span></li>
+            </ul>
+            <p class="mt-4">Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO - eine schnelle, zuverlässige Seite, die ein kleines privates Projekt tragen kann. Die Schriften gehören nicht dazu: Diese Website liefert sie selbst aus.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCCAP between the crates; scroll scrubs his frames. -->
+      <div id="tux-privacy-delivery-tux" class="mx-auto w-fit flex items-end gap-4" :class="tuxPoses[1].layoutClass">
+        <div class="relative w-24 h-24 md:w-28 md:h-28 shrink-0">
+          <template x-for="(frame, f) in tuxPoses[1].frames" :key="frame">
+            <img :src="frame" alt="Doccap, the drydocc captain"
+                 class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                 :class="[f === getTuxFrame(tuxPoses[1].id) ? '' : 'hidden', tuxPoses[1].flipClass]">
+          </template>
+        </div>
+        <p class="max-w-sm bg-panel/90 border border-line px-4 py-3 text-sm leading-relaxed text-ink" x-text="tuxPoses[1].line"></p>
+      </div>
+
+      <section id="storage" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:storage') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-dockblue' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Your device</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">No cookies - one local setting</h2>
+            <p class="mt-4">This site sets no cookies. If you switch between light and dark mode, your choice is saved in your browser's <code class="font-mono text-[13px] text-ink">localStorage</code> under the key <code class="font-mono text-[13px] text-ink">drydocc-theme</code>, so the next page opens in the same mode. It stays on your device, is never sent to any server, and you can delete it at any time in your browser's site data settings. The language switch remembers nothing.</p>
+            <p class="mt-4">Storing the setting is strictly necessary for the function you asked for, so it needs no consent (§ 165 Abs. 3 TKG 2021; § 25 Abs. 2 Nr. 2 TDDDG).</p>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Ihr Gerät</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Keine Cookies - eine lokale Einstellung</h2>
+            <p class="mt-4">Diese Website setzt keine Cookies. Wenn Sie zwischen hellem und dunklem Modus wechseln, wird Ihre Wahl im <code class="font-mono text-[13px] text-ink">localStorage</code> Ihres Browsers unter dem Schlüssel <code class="font-mono text-[13px] text-ink">drydocc-theme</code> gespeichert, damit die nächste Seite im selben Modus öffnet. Sie bleibt auf Ihrem Gerät, wird nie an einen Server gesendet, und Sie können sie jederzeit in den Website-Daten Ihres Browsers löschen. Der Sprachumschalter merkt sich nichts.</p>
+            <p class="mt-4">Das Speichern ist für die von Ihnen gewünschte Funktion unbedingt erforderlich und bedarf daher keiner Einwilligung (§ 165 Abs. 3 TKG 2021; § 25 Abs. 2 Nr. 2 TDDDG).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCCAP between the crates; scroll scrubs his frames. -->
+      <div id="tux-privacy-storage-tux" class="mx-auto w-fit flex items-end gap-4" :class="tuxPoses[2].layoutClass">
+        <div class="relative w-24 h-24 md:w-28 md:h-28 shrink-0">
+          <template x-for="(frame, f) in tuxPoses[2].frames" :key="frame">
+            <img :src="frame" alt="Doccap, the drydocc captain"
+                 class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                 :class="[f === getTuxFrame(tuxPoses[2].id) ? '' : 'hidden', tuxPoses[2].flipClass]">
+          </template>
+        </div>
+        <p class="max-w-sm bg-panel/90 border border-line px-4 py-3 text-sm leading-relaxed text-ink" x-text="tuxPoses[2].line"></p>
+      </div>
+
+      <section id="contact-form" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:contact-form') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-hardhat' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Contact</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Contact form and email</h2>
+            <p class="mt-4">If you write through the contact form in the <a href="impressum.html" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Impressum</a>, your email address and message go to Formspree, Inc. (USA), which forwards them by email. Formspree processes the data on Amazon Web Services in the USA. The transfer is safeguarded by the EU Standard Contractual Clauses, which Formspree relies on as a processor (Art. 46(2)(c) GDPR); see <a href="https://formspree.io/security/" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Formspree security</a> and the <a href="https://formspree.io/legal/privacy-policy/" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Formspree privacy policy</a>. Without JavaScript, the form submits straight to Formspree's website, which may run its own spam check.</p>
+            <p class="mt-4">Whether by form or by email, your message is used only to answer you, and deleted once the conversation is over unless the law requires keeping it. Legal basis: Art. 6(1)(b) GDPR where your request concerns a contract, otherwise Art. 6(1)(f) GDPR - the legitimate interest in answering you. If you prefer your message not to pass through the USA, write by email.</p>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Kontakt</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Kontaktformular und E-Mail</h2>
+            <p class="mt-4">Wenn Sie über das Kontaktformular im <a href="impressum.html" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Impressum</a> schreiben, gehen Ihre E-Mail-Adresse und Ihre Nachricht an Formspree, Inc. (USA), das sie per E-Mail weiterleitet. Formspree verarbeitet die Daten bei Amazon Web Services in den USA. Die Übermittlung ist durch die EU-Standardvertragsklauseln abgesichert, auf die sich Formspree als Auftragsverarbeiter stützt (Art. 46 Abs. 2 lit. c DSGVO); siehe <a href="https://formspree.io/security/" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Formspree Security</a> und die <a href="https://formspree.io/legal/privacy-policy/" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Datenschutzerklärung von Formspree</a>. Ohne JavaScript sendet das Formular direkt an die Website von Formspree, die dabei eine eigene Spam-Prüfung durchführen kann.</p>
+            <p class="mt-4">Ob per Formular oder E-Mail: Ihre Nachricht wird nur verwendet, um Ihnen zu antworten, und nach Abschluss der Korrespondenz gelöscht, sofern keine gesetzliche Aufbewahrungspflicht besteht. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO, wenn Ihr Anliegen einen Vertrag betrifft, sonst Art. 6 Abs. 1 lit. f DSGVO - das berechtigte Interesse, Ihnen zu antworten. Wenn Ihre Nachricht nicht über die USA laufen soll, schreiben Sie per E-Mail.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="links" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:links') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-teal' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Links</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Links to other sites</h2>
+            <p class="mt-4">This site links to GitHub, skills.sh, agentskill.sh, agentskills.io and the projects in the dock band. Nothing is sent to them until you click a link; from then on, their own privacy policies apply.</p>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Links</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Links zu anderen Websites</h2>
+            <p class="mt-4">Diese Website verlinkt auf GitHub, skills.sh, agentskill.sh, agentskills.io und die Projekte im Dock-Band. An sie wird nichts übertragen, bevor Sie einen Link anklicken; ab dann gelten deren eigene Datenschutzerklärungen.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="rights" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:rights') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-dockblue' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Art. 15-21 GDPR</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Your rights</h2>
+            <p class="mt-4">You have the right to access (Art. 15), rectification (Art. 16), erasure (Art. 17), restriction of processing (Art. 18), data portability (Art. 20) and to object (Art. 21 GDPR). Write via the contact details in the <a href="impressum.html" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Impressum</a>.</p>
+            <p class="mt-4">If you believe the processing of your data breaks data protection law, you can lodge a complaint with a supervisory authority - in Austria the <a href="https://dsb.gv.at" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Datenschutzbehörde</a>, or the authority where you live or work.</p>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Art. 15-21 DSGVO</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Ihre Rechte</h2>
+            <p class="mt-4">Sie haben das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21 DSGVO). Schreiben Sie dazu an die Kontaktdaten im <a href="impressum.html" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Impressum</a>.</p>
+            <p class="mt-4">Wenn Sie meinen, dass die Verarbeitung Ihrer Daten gegen das Datenschutzrecht verstößt, können Sie sich bei einer Aufsichtsbehörde beschweren - in Österreich bei der <a href="https://dsb.gv.at" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Datenschutzbehörde</a>, oder bei der Behörde dort, wo Sie wohnen oder arbeiten.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCCAP between the crates; scroll scrubs his frames. -->
+      <div id="tux-privacy-rights-tux" class="mx-auto w-fit flex items-end gap-4" :class="tuxPoses[3].layoutClass">
+        <div class="relative w-24 h-24 md:w-28 md:h-28 shrink-0">
+          <template x-for="(frame, f) in tuxPoses[3].frames" :key="frame">
+            <img :src="frame" alt="Doccap, the drydocc captain"
+                 class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                 :class="[f === getTuxFrame(tuxPoses[3].id) ? '' : 'hidden', tuxPoses[3].flipClass]">
+          </template>
+        </div>
+        <p class="max-w-sm bg-panel/90 border border-line px-4 py-3 text-sm leading-relaxed text-ink" x-text="tuxPoses[3].line"></p>
+      </div>
+  </main>
+
+  <footer class="border-t border-line bg-panel">
+    <div class="max-w-6xl mx-auto px-4 py-10 flex flex-col items-center gap-6 text-center">
+      <a href="#top" data-back-to-top aria-label="Back to top"
+         class="group flex flex-col items-center gap-1.5">
+        <span class="grid place-items-center h-10 w-10 bg-wash/90 border border-line shadow-[0_8px_24px_-12px_rgb(var(--c-ink)/0.6)] transition-transform group-hover:-translate-y-0.5">
+          <svg class="h-5 w-5 fill-ink" viewBox="0 0 7 8" shape-rendering="crispEdges" aria-hidden="true">
+            <rect x="3" y="0" width="1" height="1"/><rect x="2" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="0" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/>
+            <rect x="3" y="4" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="0" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/>
+          </svg>
+        </span>
+        <span class="font-mono text-[10px] uppercase tracking-[0.3em] text-ink bg-wash/90 px-1.5 py-0.5">Top</span>
+      </a>
+      <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-xs">
+        <a href="index.html" class="text-ink-soft hover:text-teal">Dock</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/FORKING.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">FORKING.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/AGENTS.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">AGENTS.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/docs/architecture.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">architecture.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">CHANGELOG.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">Apache-2.0</a>
+        <a href="impressum.html" class="text-ink-soft hover:text-teal">Impressum</a>
+        <a href="privacy.html" class="text-ink-soft hover:text-teal">Privacy</a>
+      </div>
+      <p class="inline-flex items-center gap-2 text-sm text-ink">
+        <img src="img/hiemalis.jpg" alt="" width="32" height="32" class="h-8 w-8 border border-line">
+        a hiemalis product
+      </p>
+      <p class="-mt-3 max-w-xl text-sm text-ink-soft">drydocc is <span class="text-ink">v0</span>: the file formats and commands are stable in practice, but until 1.0 a minor release may still change them - the <a href="https://github.com/hiemalis-at/drydocc/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">CHANGELOG</a> says when.</p>
+    </div>
+  </footer>
+</body>
+</html>

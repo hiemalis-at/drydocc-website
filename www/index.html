@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth
+  [--c-paper:233_236_241] [--c-panel:247_249_251] [--c-teal:37_152_154] [--c-dockblue:68_172_199]
+  [--c-hardhat:222_172_56] [--c-ink:25_28_32] [--c-ink-soft:84_94_104]
+  [--c-line:205_212_220] [--c-term:221_227_234] [--c-term-ink:25_28_32] [--c-navy:204_232_242] [--c-wash:243_245_248]
+  dark:[--c-paper:23_26_30] dark:[--c-panel:33_40_48] dark:[--c-teal:38_166_166]
+  dark:[--c-dockblue:39_164_179] dark:[--c-hardhat:225_169_56] dark:[--c-ink:233_236_241] dark:[--c-ink-soft:160_171_181]
+  dark:[--c-line:52_62_72] dark:[--c-term:13_16_20] dark:[--c-term-ink:221_244_246] dark:[--c-navy:11_23_52] dark:[--c-wash:34_42_52]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>drydocc - Infrastructure as Markdown for AI coding agents</title>
+  <meta name="description" content="Fork one git repo and run your mixed bag of servers and devices by writing markdown. Your coding agent - Claude Code, Mistral Vibe, or a VS Code chat or agent extension - does the rest.">
+  <link rel="icon" type="image/svg+xml" href="img/drydocc-fac.svg">
+
+  <!-- Pre-paint theme resolution (blocking, before any stylesheet) -->
+  <script src="js/theme-prepaint.js"></script>
+
+  <!-- Self-hosted fonts: Space Grotesk (headings), Inter (body), JetBrains
+       Mono (commands) - no request to Google. -->
+  <link rel="stylesheet" href="fonts/fonts.css">
+
+  <!-- Tailwind CSS via CDN, themed by the shared config. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind.config.js"></script>
+
+  <!-- GSAP + ScrollTrigger via CDN (pinned) - loaded before the IoC module
+       so the animation services can reach them through the gsapEnv facade. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <!-- IoC Container (ES Module) -->
+  <script type="module" src="js/main.js"></script>
+
+  <!-- Alpine.js via CDN (pinned: a range lets browsers keep an older cached
+       Alpine, and before 3.14.9 a re-initialized element binds twice) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.11/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-paper text-ink font-sans antialiased selection:bg-teal selection:text-paper" x-data="drydoccApp">
+
+  <!-- Toast Notification for Copying Commands -->
+  <div x-show="copyNotification"
+       x-transition:enter="transition ease-out duration-300 transform"
+       x-transition:enter-start="opacity-0 translate-y-4"
+       x-transition:enter-end="opacity-100 translate-y-0"
+       x-transition:leave="transition ease-in duration-200 transform"
+       x-transition:leave-start="opacity-100 translate-y-0"
+       x-transition:leave-end="opacity-0 translate-y-4"
+       class="fixed bottom-6 right-6 z-[60] bg-term text-term-ink px-4 py-3 border border-teal shadow-[0_12px_32px_-16px_rgb(var(--c-ink)/0.6)] flex items-center gap-3 text-sm font-mono"
+       style="display: none;">
+    <svg class="w-4 h-4 text-teal" viewBox="0 0 8 8" fill="currentColor" shape-rendering="crispEdges"><rect x="0" y="4" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="5" y="3" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/></svg>
+    <span>Copied to clipboard</span>
+  </div>
+
+  <!-- SLIM NAV - a thin glass bar; the logo hero below is the masthead. -->
+  <nav class="fixed inset-x-0 top-0 z-50 h-11 bg-panel/75 backdrop-blur-md border-b border-line">
+    <div class="max-w-6xl mx-auto h-full px-4 flex items-center justify-between gap-4">
+      <a href="#hero" class="flex items-center gap-2">
+        <img src="img/logo-sqaured-light.jpg" alt="drydocc" class="h-6 w-6 [image-rendering:pixelated] dark:hidden">
+        <img src="img/logo-sqaured-dark.jpg" alt="drydocc" class="h-6 w-6 [image-rendering:pixelated] hidden dark:block">
+        <span class="font-display font-bold text-sm tracking-tight">drydocc</span>
+      </a>
+
+      <div class="flex items-center gap-1 sm:gap-2">
+        <a href="#dock" @click="goToScene($event, 'dock')" class="hidden sm:inline-block px-2 py-1 text-xs font-medium text-ink-soft hover:text-ink transition-colors">Dock</a>
+        <a href="#story" class="px-2 py-1 text-xs font-medium text-ink-soft hover:text-ink transition-colors">Story</a>
+        <a :href="repoHref" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-ink-soft hover:text-ink transition-colors">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span class="hidden sm:inline">GitHub</span>
+        </a>
+
+        <!-- Theme switch: a pixel track with a square knob that steps
+             across. Sun on the light side, moon (and stars) on the dark. -->
+        <button type="button" role="switch" :aria-checked="theme === 'dark'" aria-label="Dark mode"
+                @click="toggleTheme()" title="Toggle light/dark theme"
+                class="relative ml-1 h-6 w-12 shrink-0 bg-navy border border-line hover:border-teal transition-colors">
+          <span aria-hidden="true" class="absolute left-2 top-1 h-0.5 w-0.5 bg-ink hidden dark:block"></span>
+          <span aria-hidden="true" class="absolute left-4 top-3 h-0.5 w-0.5 bg-ink hidden dark:block"></span>
+          <span aria-hidden="true" class="absolute right-2 top-2 h-1 w-2 bg-panel dark:hidden"></span>
+          <span aria-hidden="true" class="absolute right-3 top-1.5 h-0.5 w-1 bg-panel dark:hidden"></span>
+          <span aria-hidden="true"
+                class="absolute left-0.5 top-0.5 grid h-[18px] w-[18px] place-items-center bg-panel border border-line shadow-[0_1px_0_0_rgb(var(--c-ink)/0.25)] translate-x-0 dark:translate-x-6 transition-transform duration-200 ease-[steps(3)]">
+            <svg class="h-3 w-3 fill-hardhat dark:hidden" viewBox="0 0 8 8" shape-rendering="crispEdges">
+              <rect x="2" y="2" width="4" height="4"/><rect x="3" y="0" width="2" height="1"/><rect x="3" y="7" width="2" height="1"/>
+              <rect x="0" y="3" width="1" height="2"/><rect x="7" y="3" width="1" height="2"/>
+              <rect x="1" y="1" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/>
+            </svg>
+            <svg class="h-3 w-3 fill-ink hidden dark:block" viewBox="0 0 8 8" shape-rendering="crispEdges">
+              <rect x="2" y="0" width="3" height="1"/><rect x="1" y="1" width="2" height="1"/><rect x="0" y="2" width="2" height="4"/>
+              <rect x="1" y="6" width="2" height="1"/><rect x="2" y="7" width="4" height="1"/><rect x="5" y="6" width="2" height="1"/>
+              <rect x="6" y="1" width="1" height="1"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- THE DOCK BACKGROUND. Fixed to the viewport behind the whole page,
+       from under the header down; it moves up slower than the content
+       (parallax) and holds still while the hero and the badge band are
+       pinned. Fills the width, top-aligned. A gradient overlay eases the
+       image into the page color as it reaches its end. On a page longer
+       than that it goes on endlessly: a gap of page color, then the image
+       again - mirrored every other time - fading in and out. -->
+  <div data-dock-parallax class="fixed inset-x-0 top-0 -z-10 pointer-events-none dark:hidden" aria-hidden="true">
+    <div class="relative">
+      <img data-dock-bg src="img/drydocc-bg-light.jpg" alt="" class="w-full h-auto [image-rendering:pixelated] opacity-80">
+      <div class="absolute bottom-0 inset-x-0 h-[70vh] bg-gradient-to-b from-transparent via-paper/30 to-paper"></div>
+    </div>
+    <template x-for="tile in dockRepeats()" :key="tile.key">
+      <div class="relative" :class="dockGapClass">
+        <img src="img/drydocc-bg-light.jpg" alt="" loading="lazy" decoding="async" class="w-full h-auto [image-rendering:pixelated] opacity-80" :class="{ '-scale-x-100': tile.mirrored }">
+        <div class="absolute top-0 inset-x-0 h-[min(70vh,50%)] bg-gradient-to-t from-transparent via-paper/30 to-paper"></div>
+        <div class="absolute bottom-0 inset-x-0 h-[min(70vh,50%)] bg-gradient-to-b from-transparent via-paper/30 to-paper"></div>
+      </div>
+    </template>
+  </div>
+  <div data-dock-parallax class="fixed inset-x-0 top-0 -z-10 pointer-events-none hidden dark:block" aria-hidden="true">
+    <div class="relative">
+      <img data-dock-bg src="img/drydocc-bg-dark.jpg" alt="" class="w-full h-auto [image-rendering:pixelated] opacity-80">
+      <div class="absolute bottom-0 inset-x-0 h-[70vh] bg-gradient-to-b from-transparent via-paper/30 to-paper"></div>
+    </div>
+    <template x-for="tile in dockRepeats()" :key="tile.key">
+      <div class="relative" :class="dockGapClass">
+        <img src="img/drydocc-bg-dark.jpg" alt="" loading="lazy" decoding="async" class="w-full h-auto [image-rendering:pixelated] opacity-80" :class="{ '-scale-x-100': tile.mirrored }">
+        <div class="absolute top-0 inset-x-0 h-[min(70vh,50%)] bg-gradient-to-t from-transparent via-paper/30 to-paper"></div>
+        <div class="absolute bottom-0 inset-x-0 h-[min(70vh,50%)] bg-gradient-to-b from-transparent via-paper/30 to-paper"></div>
+      </div>
+    </template>
+  </div>
+
+  <!-- EVERYTHING BELOW THE NAV, over the fixed dock background. -->
+  <div class="relative isolate overflow-hidden">
+
+    <!-- THE HARBOR - hero and badge band as one block, so the band's
+         stacking pin holds the logo still too. -->
+    <div id="harbor">
+
+      <!-- HERO - the logo, framed with a margin below the nav and at the
+           sides. On wider screens the frame keeps the logo's exact aspect and
+           fits the viewport, so the whole logo shows. Scrolling pins the hero
+           while a pixel gradient grows in from the right over half of it (from
+           the bottom on phones), carrying the pitch. Then logo and pitch scroll
+           away together. -->
+      <section id="hero" class="relative h-[100svh] w-full overflow-hidden">
+        <div id="hero-frame" data-crate class="absolute left-4 right-4 top-14 bottom-24 md:right-auto md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:top-[4.25rem] md:aspect-[2752/1536] md:w-[min(calc(100vw-4rem),calc((100svh-10.5rem)*1.7917))] overflow-hidden bg-navy border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+          <img src="img/logo-broad-light.jpg" alt="drydocc - Infrastructure as Markdown: Doccap on a container dock"
+               class="absolute inset-0 h-full w-full object-cover object-[8%_50%] md:object-center [image-rendering:pixelated] dark:hidden">
+          <img src="img/logo-broad-dark.jpg" alt="drydocc - Infrastructure as Markdown: Doccap on a container dock at night"
+               class="absolute inset-0 h-full w-full object-cover object-[8%_50%] md:object-center [image-rendering:pixelated] hidden dark:block">
+
+          <!-- The pixel wipe: cells light as the hero's scroll passes their
+               threshold; tones step from hard-hat sparks through teal to the
+               solid wash the pitch sits on. -->
+          <div aria-hidden="true" class="pointer-events-none absolute inset-0 grid" :class="heroGridClass">
+            <template x-for="cell in heroCells" :key="cell.id">
+              <div :class="heroCellClass(cell)"></div>
+            </template>
+          </div>
+
+          <!-- The pitch, on the covered half. -->
+          <div class="absolute flex items-end md:items-center" :class="heroPitchPlacement">
+            <div class="w-full px-5 pb-6 pt-4 md:px-10 lg:px-14 md:py-0 transition duration-500 ease-out"
+                 :class="isPitchVisible() ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6 pointer-events-none'">
+              <p class="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-teal">
+                <span class="h-2 w-2 bg-teal"></span>Infrastructure as Markdown
+              </p>
+              <h1 class="mt-3 md:mt-5 font-display font-bold tracking-tight leading-[1.04] text-[1.7rem] sm:text-4xl md:text-[min(3.2rem,calc((100svh-9rem)*0.075),4vw)]">
+                Every box you run, in one git repo of markdown.
+              </h1>
+              <p class="mt-3 md:mt-4 max-w-xl text-sm sm:text-base xl:text-lg leading-relaxed text-ink-soft">
+                <strong class="text-ink">drydocc</strong> is a git repo you fork - and the fork becomes the interface to your mixed bag of servers and devices: vServers, mini PCs, Raspberry Pis, appliances. Describe every box in <code class="font-mono text-ink">.md</code>; your agent harness does the heavy lifting.
+              </p>
+              <div class="mt-4 hidden sm:flex [@media(max-height:760px)]:hidden flex-wrap items-center gap-2">
+                <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft mr-1">Drive it from</span>
+                <span class="px-2 py-1 border border-line bg-panel/70 font-mono text-xs">Claude Code</span>
+                <span class="px-2 py-1 border border-line bg-panel/70 font-mono text-xs">Mistral Vibe</span>
+                <span class="px-2 py-1 border border-line bg-panel/70 font-mono text-xs">VS Code chat / agent extension</span>
+              </div>
+              <div class="mt-5 md:mt-7 flex flex-wrap items-center gap-3">
+                <a :href="repoHref" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-2 bg-ink text-paper px-4 py-2.5 text-sm font-semibold hover:bg-teal hover:text-paper transition-colors">
+                  Fork on GitHub
+                  <svg class="w-3 h-3 fill-current" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="3" width="6" height="2"/><rect x="4" y="1" width="2" height="2"/><rect x="4" y="5" width="2" height="2"/><rect x="6" y="3" width="2" height="2"/></svg>
+                </a>
+                <button @click="copyCommand(quickstartPrompt)"
+                        class="inline-flex items-center gap-2 border border-ink/25 bg-panel/70 px-4 py-2.5 text-sm font-semibold hover:border-teal hover:text-teal transition-colors">
+                  Copy agent prompt
+                </button>
+              </div>
+            </div>
+          </div>
+          <span aria-hidden="true" class="absolute left-0 top-0 z-10 h-2 w-2 bg-teal"></span>
+          <span aria-hidden="true" class="absolute right-0 bottom-0 z-10 h-2 w-2 bg-teal"></span>
+        </div>
+
+        <!-- Pixel scroll indicator: a stepped chevron on a wash tile. -->
+        <a href="#dock" data-scroll-indicator aria-label="Scroll down" @click="goToScene($event, 'dock')"
+           class="absolute bottom-3 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 transition-opacity duration-300"
+           :class="isScrollHintVisible() ? 'opacity-100' : 'opacity-0 pointer-events-none'">
+          <span class="grid place-items-center h-10 w-10 bg-wash/90 border border-line shadow-[0_8px_24px_-12px_rgb(var(--c-ink)/0.6)]">
+            <svg class="h-5 w-5 fill-ink animate-scroll-nudge motion-reduce:animate-none" viewBox="0 0 7 8" shape-rendering="crispEdges" aria-hidden="true">
+              <rect x="0" y="0" width="1" height="1"/><rect x="6" y="0" width="1" height="1"/><rect x="1" y="1" width="1" height="1"/><rect x="5" y="1" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/>
+              <rect x="0" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="5" y="5" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="3" y="7" width="1" height="1"/>
+            </svg>
+          </span>
+          <span class="font-mono text-[10px] uppercase tracking-[0.3em] text-ink bg-wash/90 px-1.5 py-0.5">Scroll</span>
+        </a>
+      </section>
+
+      <!-- THE BADGE BAND - the quay, with Doccap on the page below it. Held
+           still (with the hero, as one harbor) while everything drydocc
+           pulls into a setup slides in from the left and stacks against the
+           right edge. -->
+      <section id="dock" class="relative">
+        <div class="relative border-y border-line bg-panel/85 backdrop-blur-md">
+          <div class="max-w-6xl mx-auto px-4 py-10 md:py-14 grid gap-8 md:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] md:items-center">
+            <div>
+              <p data-reveal-badge class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">On the quay</p>
+              <h2 data-reveal-badge class="mt-2 font-display font-bold text-2xl md:text-3xl tracking-tight leading-tight">What drydocc pulls into your setup</h2>
+              <p data-reveal-badge class="mt-2 text-sm leading-relaxed text-ink-soft">No agent, daemon or control plane of its own - just these tools. The optional ones arrive only when you use that feature.</p>
+            </div>
+
+            <div class="overflow-hidden">
+              <div class="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft">
+                <span>Quay 01</span>
+                <span>Docked <span class="text-teal" x-text="dockedCount()"></span>/<span x-text="dockTotal"></span></span>
+              </div>
+              <ul class="mt-3 flex flex-row-reverse flex-wrap gap-2 border-b-4 border-ink/70 pb-2 list-none m-0 p-0">
+                <template x-for="badge in dockBadges" :key="badge.id">
+                  <li :data-dock-badge="badge.id">
+                    <a :href="badge.href" target="_blank" rel="noopener noreferrer"
+                       class="relative overflow-hidden inline-flex h-14 items-center gap-2 border border-line bg-paper px-3 pt-2 text-ink hover:-translate-y-0.5 transition-transform">
+                      <!-- Pixel-gradient tone edge along the top -->
+                      <div aria-hidden="true" x-data="{ edge: pixelEdge('badge:' + badge.id) }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+                        <template x-for="cell in edge.cells" :key="cell.id">
+                          <div :class="cell.lit ? badge.pixelClass : ''" :data-pixel-spin="cell.spin"></div>
+                        </template>
+                      </div>
+                      <template x-if="badge.mark === 'github'"><svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></template>
+                      <template x-if="badge.mark === 'tailscale'"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" class="fill-current"/><circle cx="4" cy="6" r="2" class="fill-current"/><circle cx="20" cy="6" r="2" class="fill-current"/><circle cx="4" cy="18" r="2" class="fill-current"/><circle cx="20" cy="18" r="2" class="fill-current"/><path d="M4 6l6 5M20 6l-5 6M4 18l6-4M20 18l-5-5" stroke="currentColor" stroke-width="1.4"/></svg></template>
+                      <template x-if="badge.mark === 'podman'"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="8" height="8" stroke="currentColor" stroke-width="2"/><rect x="13" y="10" width="8" height="8" stroke="currentColor" stroke-width="2"/><path d="M7 10V6h10v4" stroke="currentColor" stroke-width="2"/></svg></template>
+                      <template x-if="badge.mark === 'ntfy'"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><path d="M6 16V9a6 6 0 0112 0v7" stroke="currentColor" stroke-width="2"/><rect x="4" y="16" width="16" height="4" fill="currentColor"/></svg></template>
+                      <template x-if="badge.mark === 'systemd'"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><path d="M7 5H3v14h4" stroke="currentColor" stroke-width="2"/><path d="M17 5h4v14h-4" stroke="currentColor" stroke-width="2"/><rect x="7" y="10" width="4" height="4" fill="currentColor"/><circle cx="15" cy="12" r="2.5" class="fill-current"/></svg></template>
+                      <template x-if="badge.mark === 'keepassxc'"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="11" stroke="currentColor" stroke-width="2"/><path d="M8 10V7a4 4 0 018 0v3" stroke="currentColor" stroke-width="2"/><rect x="11" y="14" width="2" height="4" fill="currentColor"/></svg></template>
+                      <template x-if="badge.mark === 'rsync'"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><path d="M4 9h13l-3-3" stroke="currentColor" stroke-width="2"/><path d="M20 15H7l3 3" stroke="currentColor" stroke-width="2"/></svg></template>
+                      <template x-if="badge.mark === 'qemu'"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><rect x="6" y="6" width="12" height="12" stroke="currentColor" stroke-width="2"/><rect x="10" y="10" width="4" height="4" fill="currentColor"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" stroke="currentColor" stroke-width="1.5"/></svg></template>
+                      <span class="flex flex-col items-start leading-tight">
+                        <span class="flex items-center gap-1.5">
+                          <span class="font-mono text-xs font-medium" x-text="badge.name"></span>
+                          <span x-show="badge.optional" class="font-mono text-[9px] uppercase tracking-wider px-1 border border-line text-ink-soft">optional</span>
+                        </span>
+                        <span class="font-mono text-[10px] text-ink-soft" x-text="badge.purpose"></span>
+                      </span>
+                    </a>
+                  </li>
+                </template>
+              </ul>
+
+              <!-- Static shield-style badges from the repo README -->
+              <div class="mt-5 flex flex-wrap gap-2">
+                <a href="https://github.com/hiemalis-at/drydocc/blob/main/LICENSE" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="License: Apache-2.0"></a>
+                <a href="https://github.com/hiemalis-at/drydocc/releases" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/v/release/hiemalis-at/drydocc?sort=semver" alt="Release"></a>
+                <a href="https://agentskills.io" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Agent_Skills-format-8A2BE2" alt="Agent Skills format"></a>
+                <a href="https://github.com/hiemalis-at/drydocc/blob/main/AGENTS.md" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/AGENTS.md-ready-111" alt="AGENTS.md ready"></a>
+                <a href="https://github.com/hiemalis-at/drydocc/blob/main/docs/architecture.md" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/containers-rootless_podman-892CA0" alt="Rootless podman"></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DOCCAP: dock strip (think) - on the page below the band, in no box,
+             centered with his callout. Only the callout pixels in. -->
+        <div id="tux-dock-tux" class="mt-6 mx-auto w-fit px-4 flex items-end gap-4" :class="tuxPoses[1].layoutClass">
+          <div class="relative w-20 h-20 md:w-24 md:h-24 shrink-0">
+            <template x-for="(frame, i) in tuxPoses[1].frames" :key="frame">
+              <img :src="frame" alt="Doccap, the drydocc captain"
+                   class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                   :class="[i === getTuxFrame(tuxPoses[1].id) ? '' : 'hidden', tuxPoses[1].flipClass]">
+            </template>
+          </div>
+          <p data-reveal-badge class="relative max-w-sm bg-wash border border-line px-4 py-3 text-sm leading-relaxed before:absolute before:-left-[5px] before:bottom-4 before:h-2 before:w-2 before:bg-wash before:border-l before:border-b before:border-line"
+             x-text="tuxPoses[1].line"></p>
+        </div>
+      </section>
+    </div><!-- /harbor -->
+    <div id="harbor-spacer" aria-hidden="true" class="h-[80vh]"></div>
+
+    <!-- THE STORY - one example setup of five boxes, six acts, the lab -->
+    <main id="story" class="max-w-6xl mx-auto px-4 py-20 md:py-28 flex flex-col gap-24 md:gap-32">
+
+      <!-- Intro beat + the example's cast, Doccap and his callout centered below -->
+      <section id="story-intro" class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:items-stretch">
+        <div data-reveal-card data-crate class="relative bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+          <span aria-hidden="true" class="absolute -left-px -top-px h-2 w-2 bg-teal"></span>
+          <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+          <header class="flex items-center justify-between gap-3 border-b border-line px-4 py-2 font-mono text-[11px] text-ink-soft">
+            <span class="flex items-center gap-2"><span class="h-2 w-2 bg-teal"></span>The example</span>
+            <span>five boxes · one tailnet</span>
+          </header>
+          <div class="p-6 md:p-8">
+            <h2 class="font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.05]">Five boxes that grew over the years, not by design</h2>
+            <p class="mt-5 text-lg leading-relaxed text-ink-soft">
+              This walkthrough follows one example setup - the kind most homelabs and small offices really are: a rented vServer, a legacy desktop under the desk, two Raspberry Pi 3s that have run untouched for years (one of them still 32-bit), and a Pi 4 on Home Assistant OS, where you can't install anything at all.
+            </p>
+            <p class="mt-4 text-lg leading-relaxed text-ink-soft">
+              <strong class="text-ink">Tailscale is the way in.</strong> No reverse proxy, no port forwarding, no public certificate. The one box with a public IP exposes key-only SSH on a non-standard port - and nothing else.
+            </p>
+          </div>
+        </div>
+
+        <!-- FLEET MANIFEST - the example's cast, from FleetNodeModel -->
+        <div data-reveal-card data-crate class="relative bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+          <span aria-hidden="true" class="absolute -left-px -top-px h-2 w-2 bg-teal"></span>
+          <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+          <header class="flex items-center justify-between gap-3 border-b border-line px-4 py-2 font-mono text-[11px] text-ink-soft">
+            <span class="flex items-center gap-2"><span class="h-2 w-2 bg-teal"></span>nodes/ · example</span>
+            <span><span x-text="fleetNodes.length"></span> nodes · 1 tailnet</span>
+          </header>
+          <div class="p-3 md:p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <template x-for="node in fleetNodes" :key="node.id">
+              <div class="p-3 pl-8" :class="node.cardClass">
+                <!-- Pixel-gradient tone edge along the left side -->
+                <div aria-hidden="true" x-data="{ edge: pixelEdge('node:' + node.id) }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+                  <template x-for="cell in edge.cells" :key="cell.id">
+                    <div :class="cell.lit ? node.pixelClass : ''" :data-pixel-spin="cell.spin"></div>
+                  </template>
+                </div>
+                <div class="flex items-start justify-between gap-2">
+                  <span class="font-mono text-base font-semibold leading-none" x-text="node.slug"></span>
+                  <span class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5" :class="node.badgeClass" x-text="node.arch"></span>
+                </div>
+                <div class="mt-1.5 text-xs text-ink-soft" x-text="node.hardware"></div>
+                <div class="mt-1 text-sm" x-text="node.role"></div>
+                <div class="mt-1 font-mono text-xs text-teal" x-text="node.tailnetIp"></div>
+                <div class="mt-2 font-mono text-[10px] uppercase tracking-[0.15em]"
+                     :class="node.isManaged ? 'text-dockblue' : 'text-hardhat'"
+                     x-text="node.toneLabel"></div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- DOCCAP: story strip (think) - on the page, in no crate: centered
+             below and between the two crates, his callout beside him. -->
+        <div id="tux-story-tux" class="lg:col-span-2 justify-self-center flex items-end gap-4" :class="tuxPoses[2].layoutClass">
+          <div class="relative w-24 h-24 md:w-28 md:h-28 shrink-0">
+            <template x-for="(frame, i) in tuxPoses[2].frames" :key="frame">
+              <img :src="frame" alt="Doccap, the drydocc captain"
+                   class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                   :class="[i === getTuxFrame(tuxPoses[2].id) ? '' : 'hidden', tuxPoses[2].flipClass]">
+            </template>
+          </div>
+          <p data-reveal-card class="relative max-w-sm bg-wash border border-line px-4 py-3 text-sm leading-relaxed before:absolute before:-left-[5px] before:bottom-4 before:h-2 before:w-2 before:bg-wash before:border-l before:border-b before:border-line"
+             x-text="tuxPoses[2].line"></p>
+        </div>
+      </section>
+
+      <!-- SIX ACTS - alternating story beats on a dashed spine, each one a
+           crate (narrative, markdown glimpse, typed command, outcome) with
+           Doccap narrating beside it. -->
+      <section id="story-acts" class="relative">
+        <div class="bg-paper/80 backdrop-blur-sm border border-line p-6 md:p-8">
+          <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Six acts</p>
+          <h2 class="mt-3 font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.05]">From a bare box to a full rebuild - by writing markdown</h2>
+          <p class="mt-4 max-w-3xl text-lg leading-relaxed text-ink-soft">Each act runs one skill: a markdown recipe your agent follows, backed by Python and shell scripts. Copy the command into your agent - every run leaves a journal entry in your repo.</p>
+        </div>
+
+        <div class="relative mt-14 md:mt-20">
+          <div id="story-spine" aria-hidden="true" class="absolute left-[17px] md:left-1/2 top-0 bottom-0 w-0 border-l-2 border-dashed border-teal/60"></div>
+
+          <ol class="relative list-none m-0 p-0 flex flex-col gap-16 md:gap-28">
+            <template x-for="(act, index) in acts" :key="act.id">
+              <li :id="act.id" class="relative grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-20 pl-10 md:pl-0 md:items-center">
+                <span aria-hidden="true" class="absolute left-[18px] md:left-1/2 top-6 md:top-1/2 h-3 w-3 -translate-x-1/2 md:-translate-y-1/2 bg-teal ring-4 ring-paper"></span>
+
+                <article data-reveal-card data-crate
+                         class="relative bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]"
+                         :class="index % 2 ? 'md:order-2 pl-5' : 'pl-5 md:pl-0 md:pr-5'">
+                  <span aria-hidden="true" class="absolute -left-px -top-px h-2 w-2 bg-teal"></span>
+                  <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+                  <!-- Pixel-gradient tone edge on the side facing the spine:
+                       the left on phones; on wider screens the left for odd
+                       crates and the right (mirrored) for even ones. -->
+                  <div aria-hidden="true" x-data="{ edge: pixelEdge('act:' + act.id) }" class="pointer-events-none grid overflow-hidden"
+                       :class="[edge.placementClass, edge.gridClass, index % 2 ? '' : 'md:left-auto md:right-0 md:-scale-x-100']">
+                    <template x-for="cell in edge.cells" :key="cell.id">
+                      <div :class="cell.lit ? act.edgePixelClass : ''" :data-pixel-spin="cell.spin"></div>
+                    </template>
+                  </div>
+                  <header class="flex items-center justify-between gap-3 border-b border-line px-4 py-2 font-mono text-[11px] text-ink-soft">
+                    <span class="flex items-center gap-2"><span class="h-2 w-2 bg-hardhat"></span><span x-text="act.actNumber"></span></span>
+                    <span class="px-1.5 py-0.5 text-[10px] uppercase tracking-wider" :class="act.nodeBadgeClass" x-text="act.nodeSlug"></span>
+                  </header>
+
+                  <div class="p-5 md:p-6">
+                    <h3 class="font-display font-bold text-xl md:text-2xl tracking-tight" x-text="act.title"></h3>
+                    <p class="mt-1 text-sm font-medium text-teal" x-text="act.subtitle"></p>
+                    <p class="mt-3 text-[15px] leading-relaxed text-ink-soft" x-text="act.narrative"></p>
+
+                    <!-- The markdown glimpse -->
+                    <figure class="mt-5 border border-line bg-paper/70">
+                      <figcaption class="flex items-center gap-2 border-b border-line px-3 py-1.5 font-mono text-[11px] text-ink-soft">
+                        <svg class="h-3 w-3 fill-teal" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="0" width="4" height="1"/><rect x="1" y="0" width="1" height="8"/><rect x="1" y="7" width="6" height="1"/><rect x="6" y="2" width="1" height="6"/><rect x="5" y="1" width="1" height="1"/><rect x="3" y="3" width="2" height="1"/><rect x="3" y="5" width="2" height="1"/></svg>
+                        <span x-text="act.excerpt.file"></span>
+                      </figcaption>
+                      <pre class="overflow-x-auto px-3 py-2.5 font-mono text-[13px] leading-6"><template x-for="line in act.excerptLines" :key="line.key"><code class="block whitespace-pre" :class="line.isHeading ? 'text-teal font-semibold' : 'text-ink'" x-text="line.text"></code></template></pre>
+                    </figure>
+
+                    <!-- The copy&paste-able skill command. data-terminal is
+                         the hook the animation factory's pop trigger targets. -->
+                    <div data-terminal class="mt-4 bg-term text-term-ink border border-line p-3 flex items-start gap-3 font-mono text-sm sm:text-[15px]">
+                      <span class="text-teal font-bold select-none shrink-0">$</span>
+                      <span class="break-words flex-1 min-w-0" x-text="getTypedCommand(act.id)" :aria-label="act.command"></span>
+                      <button @click="copyCommand(act.command)" class="text-term-ink/60 hover:text-teal p-0.5 shrink-0" title="Copy command">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="5" height="1"/><rect x="0" y="0" width="1" height="5"/><rect x="2" y="2" width="6" height="1"/><rect x="2" y="2" width="1" height="6"/><rect x="2" y="7" width="6" height="1"/><rect x="7" y="2" width="1" height="6"/></svg>
+                      </button>
+                    </div>
+
+                    <p class="mt-3 flex items-start gap-2 font-mono text-[13px] leading-relaxed">
+                      <span class="text-teal select-none" aria-hidden="true">✓</span>
+                      <span x-text="act.outcome"></span>
+                    </p>
+
+                    <div class="mt-4 flex flex-wrap items-center gap-3">
+                      <template x-for="(link, rel) in getResourceLinks(act.id)" :key="rel">
+                        <a :href="link.href" target="_blank" rel="noopener noreferrer"
+                           class="font-mono text-xs text-teal underline decoration-1 underline-offset-4 hover:text-dockblue"
+                           x-text="link.title"></a>
+                      </template>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- DOCCAP narrates the beat from the other side of the spine;
+                     scroll scrubs the frames from each pose's own offset. -->
+                <div :id="'tux-' + act.pose.id" class="flex items-end gap-4"
+                     :class="[index % 2 ? 'md:order-1' : '', act.pose.layoutClass]">
+                  <div class="relative w-24 h-24 md:w-36 md:h-36 shrink-0">
+                    <template x-for="(frame, i) in act.pose.frames" :key="frame">
+                      <img :src="frame" alt="Doccap, the drydocc captain"
+                           class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                           :class="[i === getTuxFrame(act.pose.id) ? '' : 'hidden', act.pose.flipClass]">
+                    </template>
+                  </div>
+                  <p data-reveal-card data-crate class="relative max-w-xs bg-panel/90 backdrop-blur-sm border border-line px-4 py-3 text-sm leading-relaxed shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]"
+                     x-text="act.pose.line"></p>
+                </div>
+              </li>
+            </template>
+          </ol>
+        </div>
+      </section>
+
+      <!-- THE LAB - drydocc's QEMU test and prototyping environment, told
+           outside the acts' timeline (it is no box of the example): one
+           wide box like the closing beat's, edged along its top, its
+           command typing in, Doccap centered below with his callout. -->
+      <section id="lab" class="flex flex-col gap-8">
+        <div data-reveal-card data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+          <!-- Pixel-gradient tone edge along the top -->
+          <div aria-hidden="true" x-data="{ edge: pixelEdge('lab') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+            <template x-for="cell in edge.cells" :key="cell.id">
+              <div :class="cell.lit ? lab.edgePixelClass : ''" :data-pixel-spin="cell.spin"></div>
+            </template>
+          </div>
+          <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+
+          <div class="px-6 pt-14 pb-12 md:px-14 md:pt-20 md:pb-16">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal" x-text="lab.actNumber"></p>
+              <span class="px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider" :class="lab.nodeBadgeClass" x-text="lab.nodeSlug"></span>
+            </div>
+            <h2 class="mt-3 max-w-3xl font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.05]" x-text="lab.title"></h2>
+            <p class="mt-4 max-w-3xl text-lg font-medium text-teal" x-text="lab.subtitle"></p>
+
+            <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+              <div>
+                <p class="text-[15px] leading-relaxed text-ink-soft" x-text="lab.narrative"></p>
+
+                <!-- The two ways to use it -->
+                <ul class="mt-5 list-none m-0 p-0 flex flex-col gap-3 text-[15px] leading-relaxed text-ink-soft">
+                  <li class="flex items-start gap-2">
+                    <span class="mt-2 h-2 w-2 shrink-0 bg-teal" aria-hidden="true"></span>
+                    <span><strong class="text-ink">Test runs</strong> - <code class="font-mono text-[13px] text-ink">/lab run &lt;scenario&gt;</code>: a headless agent works through a scenario on fresh VMs, and only assertions decide whether it passed. Repeat it for a pass rate.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="mt-2 h-2 w-2 shrink-0 bg-dockblue" aria-hidden="true"></span>
+                    <span><strong class="text-ink">Prototypes</strong> - <code class="font-mono text-[13px] text-ink">/lab up</code>: build a node with your agent, keep good states as restore points, and roll back mistakes. Then extract a runbook; the lab replays it on a fresh VM, and only a verified runbook is promoted into your fork.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="min-w-0">
+                <!-- The scenario glimpse -->
+                <figure class="border border-line bg-paper/70">
+                  <figcaption class="flex items-center gap-2 border-b border-line px-3 py-1.5 font-mono text-[11px] text-ink-soft">
+                    <svg class="h-3 w-3 fill-teal" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="0" width="4" height="1"/><rect x="1" y="0" width="1" height="8"/><rect x="1" y="7" width="6" height="1"/><rect x="6" y="2" width="1" height="6"/><rect x="5" y="1" width="1" height="1"/><rect x="3" y="3" width="2" height="1"/><rect x="3" y="5" width="2" height="1"/></svg>
+                    <span x-text="lab.excerpt.file"></span>
+                  </figcaption>
+                  <pre class="overflow-x-auto px-3 py-2.5 font-mono text-[13px] leading-6"><template x-for="line in lab.excerptLines" :key="line.key"><code class="block whitespace-pre text-ink" x-text="line.text"></code></template></pre>
+                </figure>
+
+                <!-- The copy&paste-able lab command, typed like an act's. -->
+                <div data-terminal class="mt-4 bg-term text-term-ink border border-line p-3 flex items-start gap-3 font-mono text-sm sm:text-[15px]">
+                  <span class="text-teal font-bold select-none shrink-0">$</span>
+                  <span class="break-words flex-1 min-w-0" x-text="getTypedCommand(lab.id)" :aria-label="lab.command"></span>
+                  <button @click="copyCommand(lab.command)" class="text-term-ink/60 hover:text-teal p-0.5 shrink-0" title="Copy command">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="5" height="1"/><rect x="0" y="0" width="1" height="5"/><rect x="2" y="2" width="6" height="1"/><rect x="2" y="2" width="1" height="6"/><rect x="2" y="7" width="6" height="1"/><rect x="7" y="2" width="1" height="6"/></svg>
+                  </button>
+                </div>
+
+                <p class="mt-3 flex items-start gap-2 font-mono text-[13px] leading-relaxed">
+                  <span class="text-teal select-none" aria-hidden="true">✓</span>
+                  <span x-text="lab.outcome"></span>
+                </p>
+
+                <div class="mt-4 flex flex-wrap items-center gap-3">
+                  <template x-for="(link, rel) in getResourceLinks(lab.id)" :key="rel">
+                    <a :href="link.href" target="_blank" rel="noopener noreferrer"
+                       class="font-mono text-xs text-teal underline decoration-1 underline-offset-4 hover:text-dockblue"
+                       x-text="link.title"></a>
+                  </template>
+                </div>
+              </div>
+            </div>
+
+            <!-- DOCCAP, centered below with his callout; scroll scrubs his
+                 frames. -->
+            <div :id="'tux-' + lab.pose.id" class="mt-10 mx-auto w-fit flex items-end gap-4" :class="lab.pose.layoutClass">
+              <div class="relative w-24 h-24 md:w-32 md:h-32 shrink-0">
+                <template x-for="(frame, i) in lab.pose.frames" :key="frame">
+                  <img :src="frame" alt="Doccap, the drydocc captain"
+                       class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                       :class="[i === getTuxFrame(lab.pose.id) ? '' : 'hidden', lab.pose.flipClass]">
+                </template>
+              </div>
+              <p class="max-w-md bg-paper/90 border border-line px-4 py-3 text-sm leading-relaxed"
+                 x-text="lab.pose.line"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CLOSING BEAT - the fork is your infrastructure -->
+      <section id="story-close" class="flex flex-col gap-8">
+        <div data-reveal-card data-crate class="relative overflow-hidden bg-navy border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.25),0_24px_60px_-24px_rgb(var(--c-teal)/0.45)]">
+          <span aria-hidden="true" class="absolute -left-px -top-px h-2 w-2 bg-teal"></span>
+          <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+          <div class="px-6 py-12 md:px-14 md:py-16">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">No CLI. No control plane.</p>
+            <h2 class="mt-3 max-w-3xl font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.05]">Fork the repo, and the fork is your infrastructure.</h2>
+
+            <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div class="relative overflow-hidden bg-panel/80 border border-line p-4 pt-9">
+                <div aria-hidden="true" x-data="{ edge: pixelEdge('feature:declarations') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+                  <template x-for="cell in edge.cells" :key="cell.id">
+                    <div :class="cell.lit ? 'bg-teal' : ''" :data-pixel-spin="cell.spin"></div>
+                  </template>
+                </div>
+                <h3 class="font-display font-bold text-base">Declarations</h3>
+                <p class="mt-2 text-sm leading-relaxed text-ink-soft">Node profiles and use-case documents in your fork say what each node runs.</p>
+              </div>
+              <div class="relative overflow-hidden bg-panel/80 border border-line p-4 pt-9">
+                <div aria-hidden="true" x-data="{ edge: pixelEdge('feature:skills') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+                  <template x-for="cell in edge.cells" :key="cell.id">
+                    <div :class="cell.lit ? 'bg-dockblue' : ''" :data-pixel-spin="cell.spin"></div>
+                  </template>
+                </div>
+                <h3 class="font-display font-bold text-base">21 agent skills</h3>
+                <p class="mt-2 text-sm leading-relaxed text-ink-soft">/bootstrap-node, /create-use-case, /rebuild-node and friends: markdown recipes backed by Python and shell scripts.</p>
+              </div>
+              <div class="relative overflow-hidden bg-panel/80 border border-line p-4 pt-9">
+                <div aria-hidden="true" x-data="{ edge: pixelEdge('feature:agents') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+                  <template x-for="cell in edge.cells" :key="cell.id">
+                    <div :class="cell.lit ? 'bg-hardhat' : ''" :data-pixel-spin="cell.spin"></div>
+                  </template>
+                </div>
+                <h3 class="font-display font-bold text-base">AGENTS.md</h3>
+                <p class="mt-2 text-sm leading-relaxed text-ink-soft">The invariants every agent keeps: node scoping, an append-only journal, secrets that never touch git.</p>
+              </div>
+            </div>
+
+            <!-- QUICKSTART -->
+            <div class="mt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div class="flex items-start gap-3 bg-term text-term-ink border border-line px-3 py-2.5 font-mono text-sm leading-relaxed flex-1 min-w-0">
+                <span class="text-teal select-none font-bold shrink-0">$</span>
+                <span class="break-words min-w-0" x-text="quickstartPrompt"></span>
+              </div>
+              <button @click="copyCommand(quickstartPrompt)"
+                      class="bg-teal text-paper px-5 py-3 text-sm font-semibold hover:bg-ink transition-colors shrink-0">
+                Copy agent prompt
+              </button>
+            </div>
+            <!-- INSTALL DOORS - the ways in, as tiles under the feature cards
+                 they continue (declarations → engineers, skills → skills
+                 only, AGENTS.md → works in), edged along their bottom in the
+                 same colours. -->
+            <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div class="relative overflow-hidden bg-panel/80 border border-line p-4 pb-9">
+                <div aria-hidden="true" x-data="{ edge: pixelEdge('door:engineers') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+                  <template x-for="cell in edge.cells" :key="cell.id">
+                    <div :class="cell.lit ? 'bg-teal' : ''" :data-pixel-spin="cell.spin"></div>
+                  </template>
+                </div>
+                <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-teal">For engineers</p>
+                <a href="https://github.com/hiemalis-at/drydocc#quickstart" target="_blank" rel="noopener noreferrer"
+                   class="mt-2 inline-block text-sm text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Five-step quickstart in the README →</a>
+              </div>
+              <div class="relative overflow-hidden bg-panel/80 border border-line p-4 pb-9 min-w-0">
+                <div aria-hidden="true" x-data="{ edge: pixelEdge('door:skills-only') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+                  <template x-for="cell in edge.cells" :key="cell.id">
+                    <div :class="cell.lit ? 'bg-dockblue' : ''" :data-pixel-spin="cell.spin"></div>
+                  </template>
+                </div>
+                <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-teal">Skills only</p>
+                <div class="mt-2 flex items-start gap-2 bg-term text-term-ink border border-line px-2.5 py-1.5 font-mono text-xs">
+                  <span class="text-teal select-none font-bold shrink-0">$</span>
+                  <span class="break-words flex-1 min-w-0">npx skills add hiemalis-at/drydocc</span>
+                  <button @click="copyCommand('npx skills add hiemalis-at/drydocc')" class="text-term-ink/60 hover:text-teal shrink-0" title="Copy command">
+                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="5" height="1"/><rect x="0" y="0" width="1" height="5"/><rect x="2" y="2" width="6" height="1"/><rect x="2" y="2" width="1" height="6"/><rect x="2" y="7" width="6" height="1"/><rect x="7" y="2" width="1" height="6"/></svg>
+                  </button>
+                </div>
+                <p class="mt-2 flex flex-wrap items-center gap-x-2 text-xs text-ink-soft">
+                  <span>listed on</span>
+                  <template x-for="channel in installChannels" :key="channel.id">
+                    <a :href="channel.href" target="_blank" rel="noopener noreferrer"
+                       class="font-mono text-teal underline decoration-1 underline-offset-4 hover:text-dockblue"
+                       x-text="channel.name"></a>
+                  </template>
+                </p>
+              </div>
+              <div class="relative overflow-hidden bg-panel/80 border border-line p-4 pb-9">
+                <div aria-hidden="true" x-data="{ edge: pixelEdge('door:works-in') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+                  <template x-for="cell in edge.cells" :key="cell.id">
+                    <div :class="cell.lit ? 'bg-hardhat' : ''" :data-pixel-spin="cell.spin"></div>
+                  </template>
+                </div>
+                <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-teal">Works in</p>
+                <p class="mt-2 text-sm leading-relaxed text-ink-soft">Claude Code · Mistral Vibe · VS Code chat or agent extension · any agent that reads <code class="font-mono text-ink">AGENTS.md</code></p>
+              </div>
+            </div>
+            <!-- /INSTALL DOORS -->
+
+            <!-- DOCCAP: hero strip (yell). Scroll scrubs the frames from the
+                 pose's own offset; the callout sits beside him in the flow. -->
+            <div id="tux-hero-tux" class="mt-10 mx-auto w-fit flex items-end gap-4" :class="tuxPoses[0].layoutClass">
+              <div class="relative w-24 h-24 md:w-32 md:h-32 shrink-0">
+                <template x-for="(frame, i) in tuxPoses[0].frames" :key="frame">
+                  <img :src="frame" alt="Doccap, the drydocc captain"
+                       class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                       :class="[i === getTuxFrame(tuxPoses[0].id) ? '' : 'hidden', tuxPoses[0].flipClass]">
+                </template>
+              </div>
+              <p class="max-w-md bg-panel/90 border border-line px-4 py-3 text-sm leading-relaxed"
+                 x-text="tuxPoses[0].line"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- FOOTER - text, with the hiemalis logo as the credit's only image.
+       Centered: the back-to-top tile (the scroll indicator's twin), the
+       repo links, the hiemalis credit, then the version note. -->
+  <footer class="border-t border-line bg-panel">
+    <div class="max-w-6xl mx-auto px-4 py-10 flex flex-col items-center gap-6 text-center">
+      <a href="#hero" data-back-to-top aria-label="Back to top" @click="goToScene($event, 'hero')"
+         class="group flex flex-col items-center gap-1.5">
+        <span class="grid place-items-center h-10 w-10 bg-wash/90 border border-line shadow-[0_8px_24px_-12px_rgb(var(--c-ink)/0.6)] transition-transform group-hover:-translate-y-0.5">
+          <svg class="h-5 w-5 fill-ink" viewBox="0 0 7 8" shape-rendering="crispEdges" aria-hidden="true">
+            <rect x="3" y="0" width="1" height="1"/><rect x="2" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="0" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/>
+            <rect x="3" y="4" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="0" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/>
+          </svg>
+        </span>
+        <span class="font-mono text-[10px] uppercase tracking-[0.3em] text-ink bg-wash/90 px-1.5 py-0.5">Top</span>
+      </a>
+      <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-xs">
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/FORKING.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">FORKING.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/AGENTS.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">AGENTS.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/docs/architecture.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">architecture.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">CHANGELOG.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">Apache-2.0</a>
+        <a href="impressum.html" class="text-ink-soft hover:text-teal">Impressum</a>
+        <a href="privacy.html" class="text-ink-soft hover:text-teal">Privacy</a>
+      </div>
+      <p class="inline-flex items-center gap-2 text-sm text-ink">
+        <img src="img/hiemalis.jpg" alt="" width="32" height="32" class="h-8 w-8 border border-line">
+        a hiemalis product
+      </p>
+      <p class="-mt-3 max-w-xl text-sm text-ink-soft">drydocc is <span class="text-ink">v0</span>: the file formats and commands are stable in practice, but until 1.0 a minor release may still change them - the <a href="https://github.com/hiemalis-at/drydocc/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">CHANGELOG</a> says when.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

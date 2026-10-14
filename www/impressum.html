@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth
+  [--c-paper:233_236_241] [--c-panel:247_249_251] [--c-teal:37_152_154] [--c-dockblue:68_172_199]
+  [--c-hardhat:222_172_56] [--c-ink:25_28_32] [--c-ink-soft:84_94_104]
+  [--c-line:205_212_220] [--c-term:221_227_234] [--c-term-ink:25_28_32] [--c-navy:204_232_242] [--c-wash:243_245_248]
+  dark:[--c-paper:23_26_30] dark:[--c-panel:33_40_48] dark:[--c-teal:38_166_166]
+  dark:[--c-dockblue:39_164_179] dark:[--c-hardhat:225_169_56] dark:[--c-ink:233_236_241] dark:[--c-ink-soft:160_171_181]
+  dark:[--c-line:52_62_72] dark:[--c-term:13_16_20] dark:[--c-term-ink:221_244_246] dark:[--c-navy:11_23_52] dark:[--c-wash:34_42_52]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impressum - drydocc</title>
+  <meta name="description" content="Legal notice (Impressum) of the drydocc website: media owner, contact and disclosure under the Austrian Media Act.">
+  <link rel="icon" type="image/svg+xml" href="img/drydocc-fac.svg">
+
+  <!-- Pre-paint theme resolution (blocking, before any stylesheet) -->
+  <script src="js/theme-prepaint.js"></script>
+
+  <!-- Self-hosted fonts - no request to Google. -->
+  <link rel="stylesheet" href="fonts/fonts.css">
+
+  <!-- Tailwind CSS via CDN, themed by the shared config. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind.config.js"></script>
+
+  <!-- GSAP + ScrollTrigger (Doccap's scrubbed strips, the spinning pixels) -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <!-- IoC Container (ES Module): <body data-page> picks the legal container -->
+  <script type="module" src="js/main.js"></script>
+
+  <!-- Alpine.js via CDN (pinned, as on the main page) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.11/dist/cdn.min.js"></script>
+</head>
+
+<body id="top" data-page="impressum" x-data="legalPage" class="bg-paper text-ink font-sans antialiased selection:bg-teal selection:text-paper">
+
+  <!-- SLIM NAV - home, the language switch and the theme switch -->
+  <nav class="fixed inset-x-0 top-0 z-50 h-11 bg-panel/75 backdrop-blur-md border-b border-line">
+    <div class="max-w-6xl mx-auto h-full px-4 flex items-center justify-between gap-4">
+      <a href="index.html" class="flex items-center gap-2">
+        <img src="img/logo-sqaured-light.jpg" alt="drydocc" class="h-6 w-6 [image-rendering:pixelated] dark:hidden">
+        <img src="img/logo-sqaured-dark.jpg" alt="drydocc" class="h-6 w-6 [image-rendering:pixelated] hidden dark:block">
+        <span class="font-display font-bold text-sm tracking-tight">drydocc</span>
+      </a>
+
+      <div class="flex items-center gap-1 sm:gap-2">
+        <a href="index.html#dock" class="hidden sm:inline-block px-2 py-1 text-xs font-medium text-ink-soft hover:text-ink transition-colors">Dock</a>
+        <a href="https://github.com/hiemalis-at/drydocc" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-ink-soft hover:text-ink transition-colors">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span class="hidden sm:inline">GitHub</span>
+        </a>
+
+        <!-- Language switch: English / Deutsch -->
+        <div role="group" aria-label="Language / Sprache" class="ml-1 flex items-center border border-line bg-panel/70">
+          <template x-for="lang in languages" :key="lang">
+            <button type="button" @click="selectLanguage(lang)" :aria-pressed="isLanguage(lang)"
+                    class="px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider transition-colors"
+                    :class="isLanguage(lang) ? 'bg-teal text-paper' : 'text-ink-soft hover:text-ink'"
+                    x-text="lang"></button>
+          </template>
+        </div>
+
+        <!-- Theme switch: a pixel track with a square knob that steps
+             across. Sun on the light side, moon (and stars) on the dark. -->
+        <button type="button" role="switch" :aria-checked="theme === 'dark'" aria-label="Dark mode"
+                @click="toggleTheme()" title="Toggle light/dark theme"
+                class="relative ml-1 h-6 w-12 shrink-0 bg-navy border border-line hover:border-teal transition-colors">
+          <span aria-hidden="true" class="absolute left-2 top-1 h-0.5 w-0.5 bg-ink hidden dark:block"></span>
+          <span aria-hidden="true" class="absolute left-4 top-3 h-0.5 w-0.5 bg-ink hidden dark:block"></span>
+          <span aria-hidden="true" class="absolute right-2 top-2 h-1 w-2 bg-panel dark:hidden"></span>
+          <span aria-hidden="true" class="absolute right-3 top-1.5 h-0.5 w-1 bg-panel dark:hidden"></span>
+          <span aria-hidden="true"
+                class="absolute left-0.5 top-0.5 grid h-[18px] w-[18px] place-items-center bg-panel border border-line shadow-[0_1px_0_0_rgb(var(--c-ink)/0.25)] translate-x-0 dark:translate-x-6 transition-transform duration-200 ease-[steps(3)]">
+            <svg class="h-3 w-3 fill-hardhat dark:hidden" viewBox="0 0 8 8" shape-rendering="crispEdges">
+              <rect x="2" y="2" width="4" height="4"/><rect x="3" y="0" width="2" height="1"/><rect x="3" y="7" width="2" height="1"/>
+              <rect x="0" y="3" width="1" height="2"/><rect x="7" y="3" width="1" height="2"/>
+              <rect x="1" y="1" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/>
+            </svg>
+            <svg class="h-3 w-3 fill-ink hidden dark:block" viewBox="0 0 8 8" shape-rendering="crispEdges">
+              <rect x="2" y="0" width="3" height="1"/><rect x="1" y="1" width="2" height="1"/><rect x="0" y="2" width="2" height="4"/>
+              <rect x="1" y="6" width="2" height="1"/><rect x="2" y="7" width="4" height="1"/><rect x="5" y="6" width="2" height="1"/>
+              <rect x="6" y="1" width="1" height="1"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- THE DOCK BACKGROUND - the main page's first tile, held still. -->
+  <div class="fixed inset-x-0 top-0 -z-10 pointer-events-none dark:hidden" aria-hidden="true">
+    <div class="relative">
+      <img src="img/drydocc-bg-light.jpg" alt="" class="w-full h-auto [image-rendering:pixelated] opacity-80">
+      <div class="absolute bottom-0 inset-x-0 h-[70vh] bg-gradient-to-b from-transparent via-paper/30 to-paper"></div>
+    </div>
+  </div>
+  <div class="fixed inset-x-0 top-0 -z-10 pointer-events-none hidden dark:block" aria-hidden="true">
+    <div class="relative">
+      <img src="img/drydocc-bg-dark.jpg" alt="" class="w-full h-auto [image-rendering:pixelated] opacity-80">
+      <div class="absolute bottom-0 inset-x-0 h-[70vh] bg-gradient-to-b from-transparent via-paper/30 to-paper"></div>
+    </div>
+  </div>
+
+  <main class="relative max-w-4xl mx-auto px-4 pt-24 pb-20 md:pt-28 md:pb-28 flex flex-col gap-12 md:gap-16">
+      <header class="bg-paper/80 backdrop-blur-sm border border-line p-6 md:p-10">
+        <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Legal notice</p>
+            <h1 class="mt-3 font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.1]">Impressum</h1>
+            <p class="mt-4 text-lg text-ink-soft">Who runs this site, and how to reach them.</p>
+        </div>
+        <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Impressum</p>
+            <h1 class="mt-3 font-display font-bold text-3xl md:text-5xl tracking-tight leading-[1.1]">Impressum</h1>
+            <p class="mt-4 text-lg text-ink-soft">Wer diese Website betreibt und wie Sie ihn erreichen.</p>
+        </div>
+      </header>
+
+      <section id="owner" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:owner') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-teal' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Disclosure · § 25 Abs. 5 MedienG</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Media owner and publisher</h2>
+            <p class="mt-4">Media owner, publisher and responsible for the content (name and place of residence):</p>
+            <address class="mt-4 not-italic font-mono text-sm text-ink border-l-2 border-teal pl-4">
+              Markus Winter<br>
+              Grieskirchen, Austria / Österreich
+            </address>
+            <p class="mt-4">drydocc and this site are a private, non-commercial open-source project. hiemalis is the name it is published under, not a company. The site presents the project and carries no content beyond that, so the disclosure is limited to name and place of residence (§ 25 Abs. 5 MedienG).</p>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Offenlegung · § 25 Abs. 5 MedienG</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Medieninhaber und Herausgeber</h2>
+            <p class="mt-4">Medieninhaber, Herausgeber und für den Inhalt verantwortlich (Name und Wohnort):</p>
+            <address class="mt-4 not-italic font-mono text-sm text-ink border-l-2 border-teal pl-4">
+              Markus Winter<br>
+              Grieskirchen, Austria / Österreich
+            </address>
+            <p class="mt-4">drydocc und diese Website sind ein privates, nicht-kommerzielles Open-Source-Projekt. hiemalis ist der Name, unter dem es erscheint, kein Unternehmen. Die Website präsentiert das Projekt und hat darüber hinaus keinen Informationsgehalt; die Offenlegung beschränkt sich daher auf Name und Wohnort (§ 25 Abs. 5 MedienG).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCCAP between the crates; scroll scrubs his frames. -->
+      <div id="tux-impressum-owner-tux" class="mx-auto w-fit flex items-end gap-4" :class="tuxPoses[0].layoutClass">
+        <div class="relative w-24 h-24 md:w-28 md:h-28 shrink-0">
+          <template x-for="(frame, f) in tuxPoses[0].frames" :key="frame">
+            <img :src="frame" alt="Doccap, the drydocc captain"
+                 class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                 :class="[f === getTuxFrame(tuxPoses[0].id) ? '' : 'hidden', tuxPoses[0].flipClass]">
+          </template>
+        </div>
+        <p class="max-w-sm bg-panel/90 border border-line px-4 py-3 text-sm leading-relaxed text-ink" x-text="tuxPoses[0].line"></p>
+      </div>
+
+      <section id="contact" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:contact') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-dockblue' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Contact</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Get in touch</h2>
+            <p class="mt-4">The email address is put together in your browser only when you ask for it - harvesting bots never see it.</p>
+            <p class="mt-4 flex flex-wrap items-center gap-3">
+              <button type="button" x-show="!isEmailRevealed()" @click="revealEmail()"
+                      class="inline-flex items-center gap-2 border border-ink/25 bg-panel/70 px-3 py-1.5 font-mono text-xs font-semibold text-ink hover:border-teal hover:text-teal transition-colors">Show email address</button>
+              <a x-show="isEmailRevealed()" :href="emailHref()" x-text="emailAddress()"
+                 class="font-mono text-sm text-teal underline decoration-1 underline-offset-4 hover:text-dockblue"></a>
+            </p>
+            <p class="mt-4">Or use the <a href="#form" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">contact form</a> below.</p>
+            <noscript><p class="mt-2 text-sm">Without JavaScript the address stays hidden - the contact form below still works.</p></noscript>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Kontakt</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">So erreichen Sie mich</h2>
+            <p class="mt-4">Die E-Mail-Adresse wird erst in Ihrem Browser zusammengesetzt, wenn Sie danach fragen - Adresssammler sehen sie nie.</p>
+            <p class="mt-4 flex flex-wrap items-center gap-3">
+              <button type="button" x-show="!isEmailRevealed()" @click="revealEmail()"
+                      class="inline-flex items-center gap-2 border border-ink/25 bg-panel/70 px-3 py-1.5 font-mono text-xs font-semibold text-ink hover:border-teal hover:text-teal transition-colors">E-Mail-Adresse anzeigen</button>
+              <a x-show="isEmailRevealed()" :href="emailHref()" x-text="emailAddress()"
+                 class="font-mono text-sm text-teal underline decoration-1 underline-offset-4 hover:text-dockblue"></a>
+            </p>
+            <p class="mt-4">Oder nutzen Sie das <a href="#form" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Kontaktformular</a> weiter unten.</p>
+            <noscript><p class="mt-2 text-sm">Ohne JavaScript bleibt die Adresse verborgen - das Kontaktformular unten funktioniert trotzdem.</p></noscript>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCCAP between the crates; scroll scrubs his frames. -->
+      <div id="tux-impressum-email-tux" class="mx-auto w-fit flex items-end gap-4" :class="tuxPoses[1].layoutClass">
+        <div class="relative w-24 h-24 md:w-28 md:h-28 shrink-0">
+          <template x-for="(frame, f) in tuxPoses[1].frames" :key="frame">
+            <img :src="frame" alt="Doccap, the drydocc captain"
+                 class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                 :class="[f === getTuxFrame(tuxPoses[1].id) ? '' : 'hidden', tuxPoses[1].flipClass]">
+          </template>
+        </div>
+        <p class="max-w-sm bg-panel/90 border border-line px-4 py-3 text-sm leading-relaxed text-ink" x-text="tuxPoses[1].line"></p>
+      </div>
+
+      <section id="direction" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:direction') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-hardhat' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">§ 25 Abs. 4 MedienG</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Basic direction</h2>
+            <p class="mt-4">This site presents drydocc, an open-source framework for running Linux servers and devices with markdown and AI coding agents, and documents how to use it. It carries no advertising and serves no commercial purpose.</p>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">§ 25 Abs. 4 MedienG</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Grundlegende Richtung</h2>
+            <p class="mt-4">Diese Website stellt drydocc vor, ein Open-Source-Framework, mit dem man Linux-Server und -Geräte mit Markdown und KI-Coding-Agenten betreibt, und dokumentiert seine Verwendung. Sie enthält keine Werbung und verfolgt keinen kommerziellen Zweck.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="liability" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:liability') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-teal' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Disclaimer</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Liability for content and links</h2>
+            <p class="mt-4">The content of this site is written with care, but no guarantee is given that it is correct, complete or up to date. drydocc itself is provided under the Apache License 2.0, without warranty - the licence has the details.</p>
+            <p class="mt-4">This site links to external websites. Their operators alone are responsible for their content; no unlawful content was apparent when the links were set. Should a linked page turn unlawful, the link is removed as soon as that becomes known.</p>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Haftungsausschluss</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Haftung für Inhalte und Links</h2>
+            <p class="mt-4">Die Inhalte dieser Website werden mit Sorgfalt erstellt; für ihre Richtigkeit, Vollständigkeit und Aktualität wird jedoch keine Gewähr übernommen. drydocc selbst steht unter der Apache License 2.0 und wird ohne Gewährleistung bereitgestellt - Details regelt die Lizenz.</p>
+            <p class="mt-4">Diese Website verweist auf externe Websites. Für deren Inhalte sind ausschließlich deren Betreiber verantwortlich; zum Zeitpunkt der Verlinkung waren keine Rechtsverstöße erkennbar. Wird eine verlinkte Seite rechtswidrig, wird der Link nach Kenntnis umgehend entfernt.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCCAP between the crates; scroll scrubs his frames. -->
+      <div id="tux-impressum-links-tux" class="mx-auto w-fit flex items-end gap-4" :class="tuxPoses[2].layoutClass">
+        <div class="relative w-24 h-24 md:w-28 md:h-28 shrink-0">
+          <template x-for="(frame, f) in tuxPoses[2].frames" :key="frame">
+            <img :src="frame" alt="Doccap, the drydocc captain"
+                 class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                 :class="[f === getTuxFrame(tuxPoses[2].id) ? '' : 'hidden', tuxPoses[2].flipClass]">
+          </template>
+        </div>
+        <p class="max-w-sm bg-panel/90 border border-line px-4 py-3 text-sm leading-relaxed text-ink" x-text="tuxPoses[2].line"></p>
+      </div>
+
+      <section id="copyright" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:copyright') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-dockblue' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Copyright</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Licences and credits</h2>
+            <p class="mt-4">drydocc is licensed under the <a href="https://github.com/hiemalis-at/drydocc/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Apache License 2.0</a>. Texts, images and the design of this site are by the media owner unless stated otherwise.</p>
+            <p class="mt-4">Doccap, the drydocc captain, is a penguin in the spirit of Tux, the Linux mascot <a href="https://isc.tamu.edu/~lewing/linux/" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">created by Larry Ewing</a> with The GIMP.</p>
+            <p class="mt-4">The fonts Space Grotesk, Inter and JetBrains Mono are licensed under the SIL Open Font License 1.1 and served from this site.</p>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Urheberrecht</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Lizenzen und Nachweise</h2>
+            <p class="mt-4">drydocc steht unter der <a href="https://github.com/hiemalis-at/drydocc/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Apache License 2.0</a>. Texte, Bilder und Gestaltung dieser Website stammen, sofern nicht anders angegeben, vom Medieninhaber.</p>
+            <p class="mt-4">Doccap, der drydocc-Kapitän, ist ein Pinguin im Geiste von Tux, dem Linux-Maskottchen, das <a href="https://isc.tamu.edu/~lewing/linux/" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Larry Ewing</a> mit The GIMP geschaffen hat.</p>
+            <p class="mt-4">Die Schriften Space Grotesk, Inter und JetBrains Mono stehen unter der SIL Open Font License 1.1 und werden von dieser Website selbst ausgeliefert.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCCAP between the crates; scroll scrubs his frames. -->
+      <div id="tux-impressum-form-tux" class="mx-auto w-fit flex items-end gap-4" :class="tuxPoses[3].layoutClass">
+        <div class="relative w-24 h-24 md:w-28 md:h-28 shrink-0">
+          <template x-for="(frame, f) in tuxPoses[3].frames" :key="frame">
+            <img :src="frame" alt="Doccap, the drydocc captain"
+                 class="absolute inset-0 w-full h-full object-contain [image-rendering:pixelated]"
+                 :class="[f === getTuxFrame(tuxPoses[3].id) ? '' : 'hidden', tuxPoses[3].flipClass]">
+          </template>
+        </div>
+        <p class="max-w-sm bg-panel/90 border border-line px-4 py-3 text-sm leading-relaxed text-ink" x-text="tuxPoses[3].line"></p>
+      </div>
+
+      <section id="form" data-crate class="relative overflow-hidden bg-panel/90 backdrop-blur-sm border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
+        <!-- Pixel-gradient tone edge along the top -->
+        <div aria-hidden="true" x-data="{ edge: pixelEdge('legal:form') }" class="pointer-events-none grid" :class="[edge.placementClass, edge.gridClass]">
+          <template x-for="cell in edge.cells" :key="cell.id">
+            <div :class="cell.lit ? 'bg-hardhat' : ''" :data-pixel-spin="cell.spin"></div>
+          </template>
+        </div>
+        <span aria-hidden="true" class="absolute -right-px -bottom-px h-2 w-2 bg-teal"></span>
+        <div class="px-6 pt-12 pb-8 md:px-10 md:pt-14 md:pb-10 text-[15px] leading-relaxed text-ink-soft">
+          <div x-show="isLanguage('en')" lang="en">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Contact form</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Write a message</h2>
+          </div>
+          <div x-show="isLanguage('de')" lang="de" x-cloak class="[&[x-cloak]]:hidden">
+            <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-teal">Kontaktformular</p>
+            <h2 class="mt-3 font-display font-bold text-2xl md:text-3xl tracking-tight leading-[1.1]">Schreiben Sie eine Nachricht</h2>
+          </div>
+          <!-- CONTACT FORM - sent by the contact view model as JSON (no page
+               reload, no captcha); without JavaScript the plain POST goes to
+               Formspree directly. _gotcha is Formspree's honeypot. -->
+          <form action="https://formspree.io/f/xzedjqba" method="POST" @submit.prevent="submitContact()" class="mt-6 flex flex-col gap-4">
+            <label class="block">
+              <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-teal"><span x-show="isLanguage('en')">Your email</span><span x-show="isLanguage('de')" x-cloak class="[&[x-cloak]]:hidden">Ihre E-Mail-Adresse</span></span>
+              <input type="email" name="email" required autocomplete="email" x-model="contactFields.email" class="mt-1.5 w-full bg-paper border border-line px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none">
+              <span x-show="contactError('email')" x-text="contactError('email')" class="mt-1 block text-xs text-hardhat"></span>
+            </label>
+            <label class="block">
+              <span class="font-mono text-[11px] uppercase tracking-[0.2em] text-teal"><span x-show="isLanguage('en')">Message</span><span x-show="isLanguage('de')" x-cloak class="[&[x-cloak]]:hidden">Nachricht</span></span>
+              <textarea name="message" required rows="6" x-model="contactFields.message" class="mt-1.5 w-full bg-paper border border-line px-3 py-2 text-sm text-ink focus:border-teal focus:outline-none resize-y"></textarea>
+              <span x-show="contactError('message')" x-text="contactError('message')" class="mt-1 block text-xs text-hardhat"></span>
+            </label>
+            <input type="text" name="_gotcha" x-model="contactFields._gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden">
+            <div class="flex flex-wrap items-center gap-4">
+              <button type="submit" :disabled="isContactSending()"
+                      class="bg-teal text-paper px-5 py-2.5 text-sm font-semibold hover:bg-ink transition-colors disabled:opacity-60">
+                <span x-show="!isContactSending()"><span x-show="isLanguage('en')">Send</span><span x-show="isLanguage('de')" x-cloak class="[&[x-cloak]]:hidden">Senden</span></span>
+                <span x-show="isContactSending()"><span x-show="isLanguage('en')">Sending…</span><span x-show="isLanguage('de')" x-cloak class="[&[x-cloak]]:hidden">Wird gesendet …</span></span>
+              </button>
+              <p x-show="contactStatus() === 'sent'" class="text-sm text-teal"><span x-show="isLanguage('en')">Thanks - your message is on its way.</span><span x-show="isLanguage('de')" x-cloak class="[&[x-cloak]]:hidden">Danke - Ihre Nachricht ist unterwegs.</span></p>
+              <p x-show="contactFormError()" x-text="contactFormError()" class="text-sm text-hardhat"></p>
+            </div>
+            <p class="text-xs text-ink-soft"><span x-show="isLanguage('en')">Your message goes to Formspree, which forwards it by email. Details in the <a href="privacy.html" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">privacy statement</a>.</span><span x-show="isLanguage('de')" x-cloak class="[&[x-cloak]]:hidden">Ihre Nachricht geht an Formspree, das sie per E-Mail weiterleitet. Details in der <a href="privacy.html" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">Datenschutzerklärung</a>.</span></p>
+          </form>
+        </div>
+      </section>
+  </main>
+
+  <footer class="border-t border-line bg-panel">
+    <div class="max-w-6xl mx-auto px-4 py-10 flex flex-col items-center gap-6 text-center">
+      <a href="#top" data-back-to-top aria-label="Back to top"
+         class="group flex flex-col items-center gap-1.5">
+        <span class="grid place-items-center h-10 w-10 bg-wash/90 border border-line shadow-[0_8px_24px_-12px_rgb(var(--c-ink)/0.6)] transition-transform group-hover:-translate-y-0.5">
+          <svg class="h-5 w-5 fill-ink" viewBox="0 0 7 8" shape-rendering="crispEdges" aria-hidden="true">
+            <rect x="3" y="0" width="1" height="1"/><rect x="2" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="0" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/>
+            <rect x="3" y="4" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="0" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/>
+          </svg>
+        </span>
+        <span class="font-mono text-[10px] uppercase tracking-[0.3em] text-ink bg-wash/90 px-1.5 py-0.5">Top</span>
+      </a>
+      <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-xs">
+        <a href="index.html" class="text-ink-soft hover:text-teal">Dock</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/FORKING.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">FORKING.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/AGENTS.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">AGENTS.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/docs/architecture.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">architecture.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">CHANGELOG.md</a>
+        <a href="https://github.com/hiemalis-at/drydocc/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-ink-soft hover:text-teal">Apache-2.0</a>
+        <a href="impressum.html" class="text-ink-soft hover:text-teal">Impressum</a>
+        <a href="privacy.html" class="text-ink-soft hover:text-teal">Privacy</a>
+      </div>
+      <p class="inline-flex items-center gap-2 text-sm text-ink">
+        <img src="img/hiemalis.jpg" alt="" width="32" height="32" class="h-8 w-8 border border-line">
+        a hiemalis product
+      </p>
+      <p class="-mt-3 max-w-xl text-sm text-ink-soft">drydocc is <span class="text-ink">v0</span>: the file formats and commands are stable in practice, but until 1.0 a minor release may still change them - the <a href="https://github.com/hiemalis-at/drydocc/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="text-teal underline decoration-1 underline-offset-4 hover:text-dockblue">CHANGELOG</a> says when.</p>
+    </div>
+  </footer>
+</body>
+</html>

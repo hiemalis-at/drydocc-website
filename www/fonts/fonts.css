@@ -1,0 +1,26 @@
+/* Self-hosted fonts (SIL Open Font License 1.1, see OFL-*.txt beside each
+   file): the page never asks Google for them, so no visitor IP leaves for
+   a font. Each file is a variable font covering every weight the page
+   uses; latin subset only (Basic Latin, Latin-1 incl. ä ö ü ß, €). The
+   one exception to the no-raw-CSS rule: Tailwind cannot declare fonts. */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('space-grotesk-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('inter-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url('jetbrains-mono-latin.woff2') format('woff2');
+}
