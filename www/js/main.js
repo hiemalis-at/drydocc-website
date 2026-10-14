@@ -289,9 +289,8 @@ export class IoCContainer {
         // The repo to fork, found through the badges' HATEOAS links.
         repoHref: viewModel.getBadgeLink('github').href,
 
-        // The hero's pixel wipe: static geometry, scroll-driven lighting.
-        heroCells: hero.cells,
-        heroGridClass: hero.gridClass,
+        // The hero's pixel wipe: one layer per tone, scroll-driven masks.
+        heroLayers: hero.layers,
         heroPitchPlacement: hero.pitchPlacementClass,
 
         // The badge band: arrival order and the docked counter.
@@ -311,8 +310,8 @@ export class IoCContainer {
           this.theme = viewModel.theme.toggle();
         },
 
-        heroCellClass(cell) {
-          return hero.cellClass(cell);
+        heroLayerMask(tone) {
+          return hero.layerMask(tone);
         },
 
         isPitchVisible() {

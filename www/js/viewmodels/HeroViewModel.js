@@ -3,10 +3,15 @@
  *
  * Holds the pixel-wipe cells (built by PixelGradientBuilder) and one
  * progress number the hero's pinned scroll trigger pushes in. Alpine reads
- * everything else - which cells are lit, their stepped tone classes, the
- * mask that reveals the pitch text cell by cell, whether the pitch takes
- * clicks and whether the scroll hint shows - from here, so GSAP never
- * touches the DOM for the wipe.
+ * everything else - one layer per stepped tone with a mask of its lit
+ * cells, the mask that reveals the pitch text cell by cell, whether the
+ * pitch takes clicks and whether the scroll hint shows - from here, so GSAP
+ * never touches the DOM for the wipe.
+ *
+ * The wipe is painted as masked tone layers rather than a box per cell:
+ * cells have fractional edges, and separate boxes anti-alias them into
+ * hairline seams the logo shows through. A crisp-edged mask snaps
+ * neighbouring cells to the same device pixel.
  */
 // The wash tints mix a brand colour into the wash itself, so they stay
 // opaque (the logo never shows through under the pitch) and follow the
@@ -53,7 +58,10 @@ export class HeroViewModel {
     // The lit set only ever grows along the thresholds, so its size names it.
     this._litOrder = cells.filter((cell) => cell.threshold <= 1)
       .sort((a, b) => a.threshold - b.threshold);
-    this._mask = { litCount: -1, value: '' };
+    this._layers = Object.freeze(Object.keys(TONE_CLASSES).map(Number).sort((a, b) => a - b)
+      .filter((tone) => this._litOrder.some((cell) => cell.tone === tone))
+      .map((tone) => Object.freeze({ tone, toneClass: TONE_CLASSES[tone] })));
+    this._mask = { litCount: -1, value: '', byTone: new Map() };
   }
 
   get cells() {
@@ -64,8 +72,12 @@ export class HeroViewModel {
     return this._state.progress;
   }
 
-  get gridClass() {
-    return `grid-cols-[repeat(${this._columns},minmax(0,1fr))] grid-rows-[repeat(${this._rows},minmax(0,1fr))]`;
+  /**
+   * The tones the wipe ever lights, each painted as one masked layer.
+   * @returns {ReadonlyArray<{tone: number, toneClass: string}>}
+   */
+  get layers() {
+    return this._layers;
   }
 
   get pitchPlacementClass() {
@@ -84,15 +96,27 @@ export class HeroViewModel {
    * @returns {string} a CSS url() of an SVG data URI
    */
   get pitchMask() {
-    const progress = this._state.progress;
-    let litCount = 0;
-    while (litCount < this._litOrder.length && this._litOrder[litCount].threshold <= progress) {
-      litCount += 1;
+    const mask = this._currentMask();
+    if (mask.value === '') {
+      mask.value = this._maskFor(this._litOrder.slice(0, mask.litCount));
     }
-    if (litCount !== this._mask.litCount) {
-      this._mask = { litCount, value: this._maskFor(this._litOrder.slice(0, litCount)) };
+    return mask.value;
+  }
+
+  /**
+   * A tone layer's mask: its lit cells only, on the wipe's own grid.
+   * Rebuilt only when a cell lights or goes dark.
+   *
+   * @param {number} tone
+   * @returns {string} a CSS url() of an SVG data URI
+   */
+  layerMask(tone) {
+    const mask = this._currentMask();
+    if (!mask.byTone.has(tone)) {
+      const lit = this._litOrder.slice(0, mask.litCount).filter((cell) => cell.tone === tone);
+      mask.byTone.set(tone, this._maskFor(lit));
     }
-    return this._mask.value;
+    return mask.byTone.get(tone);
   }
 
   get indicatorVisible() {
@@ -111,8 +135,17 @@ export class HeroViewModel {
     return this._state.progress >= cell.threshold;
   }
 
-  cellClass(cell) {
-    return this.isCellLit(cell) ? TONE_CLASSES[cell.tone] : 'opacity-0';
+  /** The mask cache for the current lit set, emptied when it changes. */
+  _currentMask() {
+    const progress = this._state.progress;
+    let litCount = 0;
+    while (litCount < this._litOrder.length && this._litOrder[litCount].threshold <= progress) {
+      litCount += 1;
+    }
+    if (litCount !== this._mask.litCount) {
+      this._mask = { litCount, value: '', byTone: new Map() };
+    }
+    return this._mask;
   }
 
   _maskFor(lit) {

@@ -228,10 +228,12 @@
 
           <!-- The pixel wipe: cells light as the hero's scroll passes their
                threshold; tones step from hard-hat sparks through teal to the
-               solid wash the pitch sits on. -->
-          <div aria-hidden="true" class="pointer-events-none absolute inset-0 grid" :class="heroGridClass">
-            <template x-for="cell in heroCells" :key="cell.id">
-              <div :class="heroCellClass(cell)"></div>
+               solid wash the pitch sits on. Each tone is one layer masked to
+               its lit cells, so neighbouring cells meet without seams. -->
+          <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+            <template x-for="layer in heroLayers" :key="layer.tone">
+              <div class="absolute inset-0 [--hero-layer-mask:linear-gradient(transparent,transparent)] [mask-image:var(--hero-layer-mask)] [mask-size:100%_100%] [mask-repeat:no-repeat]"
+                   :class="layer.toneClass" :style="{ '--hero-layer-mask': heroLayerMask(layer.tone) }"></div>
             </template>
           </div>
 
