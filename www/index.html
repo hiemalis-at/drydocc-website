@@ -123,8 +123,8 @@
   <nav class="fixed inset-x-0 top-0 z-50 h-11 bg-panel/75 backdrop-blur-md border-b border-line">
     <div class="max-w-6xl mx-auto h-full px-4 flex items-center justify-between gap-4">
       <a href="#hero" class="flex items-center gap-2">
-        <img src="img/logo-sqaured-light.jpg" alt="drydocc" class="h-6 w-6 [image-rendering:pixelated] dark:hidden">
-        <img src="img/logo-sqaured-dark.jpg" alt="drydocc" class="h-6 w-6 [image-rendering:pixelated] hidden dark:block">
+        <img src="img/logo-mark-light.jpg" alt="drydocc" width="96" height="96" class="h-6 w-6 [image-rendering:pixelated] dark:hidden">
+        <img src="img/logo-mark-dark.jpg" alt="drydocc" width="96" height="96" class="h-6 w-6 [image-rendering:pixelated] hidden dark:block">
         <span class="font-display font-bold text-sm tracking-tight">drydocc</span>
       </a>
 
@@ -217,9 +217,13 @@
            away together. -->
       <section id="hero" class="relative h-[100svh] w-full overflow-hidden">
         <div id="hero-frame" data-crate class="absolute left-4 right-4 top-14 bottom-24 md:right-auto md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:top-[4.25rem] md:aspect-[2752/1536] md:w-[min(calc(100vw-4rem),calc((100svh-10.5rem)*1.7917))] overflow-hidden bg-navy border border-line shadow-[0_18px_40px_-28px_rgb(var(--c-ink)/0.55)] dark:shadow-[0_0_0_1px_rgb(var(--c-teal)/0.16),0_18px_40px_-24px_rgb(var(--c-teal)/0.4)]">
-          <img src="img/logo-broad-light.jpg" alt="drydocc - Infrastructure as Markdown: Doccap on a container dock"
+          <img src="img/logo-broad-light.jpg" srcset="img/logo-broad-light-1376.jpg 1376w, img/logo-broad-light.jpg 2752w"
+               sizes="(min-width: 768px) calc(100vw - 4rem), 180vh" width="2752" height="1536" loading="lazy" decoding="async"
+               alt="drydocc - Infrastructure as Markdown: Doccap on a container dock"
                class="absolute inset-0 h-full w-full object-cover object-[8%_50%] md:object-center [image-rendering:pixelated] dark:hidden">
-          <img src="img/logo-broad-dark.jpg" alt="drydocc - Infrastructure as Markdown: Doccap on a container dock at night"
+          <img src="img/logo-broad-dark.jpg" srcset="img/logo-broad-dark-1376.jpg 1376w, img/logo-broad-dark.jpg 2752w"
+               sizes="(min-width: 768px) calc(100vw - 4rem), 180vh" width="2752" height="1536" loading="lazy" decoding="async"
+               alt="drydocc - Infrastructure as Markdown: Doccap on a container dock at night"
                class="absolute inset-0 h-full w-full object-cover object-[8%_50%] md:object-center [image-rendering:pixelated] hidden dark:block">
 
           <!-- The pixel wipe: cells light as the hero's scroll passes their
@@ -233,8 +237,9 @@
 
           <!-- The pitch, on the covered half. It is always there, masked to
                the lit cells, so the wipe pixels it in; it takes clicks once
-               the wipe has settled. -->
-          <div data-hero-pitch class="absolute inset-0 [mask-image:var(--hero-pitch-mask)] [mask-size:100%_100%] [mask-repeat:no-repeat]"
+               the wipe has settled. The mask defaults to fully transparent,
+               so the text stays hidden until Alpine binds the live mask. -->
+          <div data-hero-pitch class="absolute inset-0 [--hero-pitch-mask:linear-gradient(transparent,transparent)] [mask-image:var(--hero-pitch-mask)] [mask-size:100%_100%] [mask-repeat:no-repeat]"
                :style="{ '--hero-pitch-mask': heroPitchMask() }">
             <div class="absolute flex items-end md:items-center" :class="heroPitchPlacement">
               <div class="w-full px-5 pb-6 pt-4 md:px-10 lg:px-14 md:py-0"
