@@ -104,6 +104,10 @@
     </div>
   </div>
 
+  <!-- A page-colored scrim over the dock background, so it stays a mood and
+       never competes with the text. --c-paper flips with the theme. -->
+  <div data-dock-fade class="fixed inset-0 -z-10 pointer-events-none bg-paper/50 dark:bg-paper/40" aria-hidden="true"></div>
+
   <main class="relative max-w-4xl mx-auto px-4 pt-24 pb-20 md:pt-28 md:pb-28 flex flex-col gap-12 md:gap-16">
       <header class="bg-paper/80 backdrop-blur-sm border border-line p-6 md:p-10">
         <div x-show="isLanguage('en')" lang="en">
