@@ -319,6 +319,10 @@ export class IoCContainer {
           return hero.pitchVisible;
         },
 
+        heroPitchMask() {
+          return hero.pitchMask;
+        },
+
         isScrollHintVisible() {
           return hero.indicatorVisible;
         },

@@ -3,9 +3,10 @@
  *
  * Holds the pixel-wipe cells (built by PixelGradientBuilder) and one
  * progress number the hero's pinned scroll trigger pushes in. Alpine reads
- * everything else - which cells are lit, their stepped tone classes,
- * whether the pitch text and the scroll hint show - from here, so GSAP
- * never touches the DOM for the wipe.
+ * everything else - which cells are lit, their stepped tone classes, the
+ * mask that reveals the pitch text cell by cell, whether the pitch takes
+ * clicks and whether the scroll hint shows - from here, so GSAP never
+ * touches the DOM for the wipe.
  */
 // The wash tints mix a brand colour into the wash itself, so they stay
 // opaque (the logo never shows through under the pitch) and follow the
@@ -49,6 +50,10 @@ export class HeroViewModel {
     this._direction = direction;
     this._state = { progress: 0 };
     this._reactiveBound = false;
+    // The lit set only ever grows along the thresholds, so its size names it.
+    this._litOrder = cells.filter((cell) => cell.threshold <= 1)
+      .sort((a, b) => a.threshold - b.threshold);
+    this._mask = { litCount: -1, value: '' };
   }
 
   get cells() {
@@ -71,6 +76,25 @@ export class HeroViewModel {
     return this._state.progress >= PITCH_SHOWS_AT;
   }
 
+  /**
+   * The pitch's mask: a CSS image of the lit cells only, on the wipe's own
+   * grid, so the text shows through exactly where the wipe has pixeled in.
+   * Rebuilt only when a cell lights or goes dark.
+   *
+   * @returns {string} a CSS url() of an SVG data URI
+   */
+  get pitchMask() {
+    const progress = this._state.progress;
+    let litCount = 0;
+    while (litCount < this._litOrder.length && this._litOrder[litCount].threshold <= progress) {
+      litCount += 1;
+    }
+    if (litCount !== this._mask.litCount) {
+      this._mask = { litCount, value: this._maskFor(this._litOrder.slice(0, litCount)) };
+    }
+    return this._mask.value;
+  }
+
   get indicatorVisible() {
     return this._state.progress < INDICATOR_HIDES_AT;
   }
@@ -89,6 +113,31 @@ export class HeroViewModel {
 
   cellClass(cell) {
     return this.isCellLit(cell) ? TONE_CLASSES[cell.tone] : 'opacity-0';
+  }
+
+  _maskFor(lit) {
+    const litIds = new Set(lit.map((cell) => cell.id));
+    const rows = new Map();
+    this._cells.filter((cell) => litIds.has(cell.id)).forEach((cell) => {
+      if (!rows.has(cell.row)) rows.set(cell.row, []);
+      rows.get(cell.row).push(cell.col);
+    });
+    // One rectangle per horizontal run of lit cells.
+    let path = '';
+    [...rows.keys()].sort((a, b) => a - b).forEach((row) => {
+      const cols = rows.get(row).sort((a, b) => a - b);
+      let start = 0;
+      for (let i = 1; i <= cols.length; i += 1) {
+        if (i === cols.length || cols[i] !== cols[i - 1] + 1) {
+          const width = cols[i - 1] - cols[start] + 1;
+          path += `M${cols[start]} ${row}h${width}v1h-${width}z`;
+          start = i;
+        }
+      }
+    });
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${this._columns} ${this._rows}" `
+      + `preserveAspectRatio="none" shape-rendering="crispEdges"><path d="${path}"/></svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
   }
 
   /**
